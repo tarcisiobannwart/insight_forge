@@ -1,0 +1,72 @@
+{
+  "project": "insightforge",
+  "version": "0.1.0-alpha",
+  "steps": {
+    "code_analysis": true,
+    "doc_generation": true,
+    "usecase_extraction": true,
+    "backlog_generation": true,
+    "llm_ingestion": false
+  },
+  "generated_at": "2025-05-02T15:15:00Z",
+  "files_analyzed": 8,
+  "components": {
+    "code_parser": {
+      "implemented": true,
+      "completion": 70,
+      "pending_features": [
+        "Detecção de herança",
+        "Análise de imports",
+        "Suporte multi-linguagem"
+      ]
+    },
+    "doc_generator": {
+      "implemented": true,
+      "completion": 60,
+      "pending_features": [
+        "Templates personalizáveis",
+        "Geração de diagramas",
+        "Melhor navegabilidade"
+      ]
+    },
+    "usecase_extractor": {
+      "implemented": true,
+      "completion": 50,
+      "pending_features": [
+        "Detecção de cenários alternativos",
+        "Inferência de pré/pós condições",
+        "Identificação de atores"
+      ]
+    },
+    "backlog_builder": {
+      "implemented": true,
+      "completion": 40,
+      "pending_features": [
+        "Critérios de aceitação mais específicos",
+        "Estimativa automática",
+        "Agrupamento por domínio"
+      ]
+    },
+    "business_rules_extractor": {
+      "implemented": false,
+      "completion": 0,
+      "pending_features": [
+        "Implementação completa"
+      ]
+    },
+    "ollama_integration": {
+      "implemented": false,
+      "completion": 0,
+      "pending_features": [
+        "Implementação completa"
+      ]
+    }
+  },
+  "next_milestone": "0.2.0-alpha",
+  "next_tasks": [
+    "Implementar detecção de herança entre classes",
+    "Adicionar extração de regras de negócio",
+    "Implementar testes unitários",
+    "Melhorar a geração de documentação"
+  ]
+}

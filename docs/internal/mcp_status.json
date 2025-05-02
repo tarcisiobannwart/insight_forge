@@ -1,0 +1,170 @@
+{
+  "project": "InsightForge",
+  "version": "0.1.0-alpha",
+  "steps": {
+    "code_analysis": true,
+    "doc_generation": true,
+    "usecase_extraction": true,
+    "backlog_generation": true,
+    "llm_ingestion": false
+  },
+  "generated_at": "2025-05-02T16:00:00Z",
+  "components": {
+    "code_parser": {
+      "implemented": true,
+      "completion": 40,
+      "pending_features": [
+        "Detecção de herança",
+        "Análise de imports",
+        "Detecção de atributos",
+        "Suporte multi-linguagem"
+      ],
+      "planned_tasks": [
+        "TASK-CP-01: Aprimorar PythonAstParser",
+        "TASK-CP-02: Implementar tratamento de erros robusto"
+      ]
+    },
+    "doc_generator": {
+      "implemented": true,
+      "completion": 30,
+      "pending_features": [
+        "Sistema de templates",
+        "Geração de diagramas",
+        "Melhor navegabilidade"
+      ],
+      "planned_tasks": [
+        "TASK-DG-01: Implementar sistema de templates",
+        "TASK-DG-02: Geração de diagramas com Mermaid"
+      ]
+    },
+    "usecase_extractor": {
+      "implemented": true,
+      "completion": 35,
+      "pending_features": [
+        "Detecção de cenários alternativos",
+        "Inferência de pré/pós condições",
+        "Identificação de atores"
+      ],
+      "planned_tasks": [
+        "TASK-RE-01: Aprimorar extração de casos de uso"
+      ]
+    },
+    "backlog_builder": {
+      "implemented": true,
+      "completion": 25,
+      "pending_features": [
+        "Critérios de aceitação mais específicos",
+        "Estimativa automática",
+        "Agrupamento por domínio"
+      ],
+      "planned_tasks": [
+        "TASK-RE-03: Melhorar gerador de backlog"
+      ]
+    },
+    "business_rules_extractor": {
+      "implemented": false,
+      "completion": 0,
+      "pending_features": [
+        "Implementação inicial",
+        "Detecção em validações",
+        "Detecção em comentários"
+      ],
+      "planned_tasks": [
+        "TASK-RE-02: Implementar extrator de regras de negócio"
+      ]
+    },
+    "ollama_integration": {
+      "implemented": false,
+      "completion": 0,
+      "pending_features": [
+        "Cliente Ollama",
+        "Sistema de embeddings",
+        "Interface de consulta"
+      ],
+      "planned_tasks": [
+        "TASK-LLM-01: Implementar cliente Ollama",
+        "TASK-LLM-02: Implementar sistema de embeddings"
+      ]
+    },
+    "infrastructure": {
+      "implemented": true,
+      "completion": 20,
+      "pending_features": [
+        "Testes unitários",
+        "Sistema de configuração",
+        "CLI avançada"
+      ],
+      "planned_tasks": [
+        "TASK-INF-01: Implementar testes unitários",
+        "TASK-INF-02: Implementar sistema de configuração"
+      ]
+    }
+  },
+  "milestones": [
+    {
+      "version": "0.2.0-alpha",
+      "name": "Fundação",
+      "tasks": [
+        "TASK-CP-01",
+        "TASK-RE-02",
+        "TASK-DG-01",
+        "TASK-INF-01",
+        "TASK-DG-02"
+      ],
+      "estimated_completion": "2025-06-01",
+      "status": "in_progress"
+    },
+    {
+      "version": "0.3.0-alpha",
+      "name": "Ampliação",
+      "tasks": [
+        "TASK-RE-01",
+        "TASK-CP-02",
+        "TASK-RE-03",
+        "TASK-DG-03",
+        "TASK-INF-02",
+        "TASK-INF-03",
+        "TASK-CP-04"
+      ],
+      "estimated_completion": "2025-07-01",
+      "status": "planned"
+    },
+    {
+      "version": "0.4.0-alpha",
+      "name": "Integração com LLM",
+      "tasks": [
+        "TASK-LLM-01",
+        "TASK-LLM-02",
+        "TASK-RE-04",
+        "TASK-LLM-03"
+      ],
+      "estimated_completion": "2025-08-01",
+      "status": "planned"
+    },
+    {
+      "version": "0.5.0-alpha",
+      "name": "Expansão",
+      "tasks": [
+        "TASK-CP-03",
+        "TASK-DG-04",
+        "TASK-INF-04"
+      ],
+      "estimated_completion": "2025-09-01",
+      "status": "planned"
+    }
+  ],
+  "priorities": [
+    "Detecção de herança entre classes",
+    "Extração de regras de negócio",
+    "Sistema de templates para documentação",
+    "Implementação de testes unitários",
+    "Geração de diagramas Mermaid"
+  ],
+  "stats": {
+    "total_tasks": 20,
+    "completed_tasks": 0,
+    "in_progress_tasks": 0,
+    "planned_tasks": 20,
+    "estimated_days": 67
+  }
+}
