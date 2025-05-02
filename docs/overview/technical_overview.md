@@ -28,17 +28,19 @@ O InsightForge é construído usando uma arquitetura modular baseada em componen
 
 ### 1. Code Parser
 
-O `CodeParser` é responsável por analisar o código-fonte e extrair informações estruturais. Atualmente suporta Python, usando o módulo AST (Abstract Syntax Tree) para análise sem execução do código.
+O `CodeParser` é responsável por analisar o código-fonte e extrair informações estruturais. Suporta Python, PHP e JavaScript/TypeScript, utilizando analisadores específicos para cada linguagem.
 
 **Recursos atuais:**
-- Identificação de classes, métodos e funções
-- Extração de docstrings e parâmetros
+- Identificação de classes, interfaces, traits, métodos e funções
+- Extração de docstrings, PHPDoc, JSDoc e TSDoc
+- Detecção de herança e implementação de interfaces
+- Suporte para features específicas de cada linguagem
 - Armazenamento de informações de localização (arquivo, linha)
 
-**Limitações atuais:**
-- Suporta apenas Python
-- Não identifica relações entre classes (herança, composição)
-- Não analisa variáveis globais ou constantes
+**Suporte a linguagens:**
+- **Python**: Análise via módulo AST (Abstract Syntax Tree)
+- **PHP**: Análise via biblioteca phply (opcional)
+- **JavaScript/TypeScript**: Análise via Node.js e @babel/parser (opcional)
 
 ### 2. Documentation Generator
 
@@ -93,11 +95,15 @@ A integração com modelos de linguagem permitirá consultas em linguagem natura
 
 ## Stack Tecnológica
 
-- **Linguagem**: Python 3.10+
-- **Análise de Código**: ast (biblioteca padrão)
+- **Linguagem Principal**: Python 3.10+
+- **Análise de Código**: 
+  - Python: ast (biblioteca padrão)
+  - PHP: phply (opcional)
+  - JavaScript/TypeScript: Node.js e @babel/parser (opcional)
 - **Manipulação de Arquivos**: pathlib, glob
 - **Interface CLI**: argparse, rich
 - **Formatação**: markdown, pyyaml
+- **Configuração**: jsonschema para validação
 - **Validação de Tipo**: mypy
 - **Testes**: pytest
 

@@ -360,6 +360,78 @@ class CodeParser:
         except ImportError:
             print("PHP parser not available, skipping PHP files")
         
+        # Find JavaScript/TypeScript files
+        js_files = self._find_files("**/*.js") + self._find_files("**/*.jsx")
+        ts_files = self._find_files("**/*.ts") + self._find_files("**/*.tsx")
+        all_js_ts_files = js_files + ts_files
+        
+        # Parse JavaScript/TypeScript files
+        if all_js_ts_files:
+            try:
+                from .javascript_parser import JavaScriptParser, adapt_js_to_insightforge
+                
+                for file_path in all_js_ts_files:
+                    parser = JavaScriptParser(file_path)
+                    classes, functions, metadata = parser.parse()
+                    
+                    if classes or functions:
+                        # Convert JavaScript parsed data to InsightForge format
+                        js_data = {
+                            'classes': classes,
+                            'functions': functions,
+                            'file_dependencies': metadata.get('file_dependencies', {})
+                        }
+                        
+                        insightforge_data = adapt_js_to_insightforge(js_data)
+                        
+                        # Add parsed classes to our collection
+                        for class_dict in insightforge_data['classes']:
+                            # Convert dict back to CodeClass
+                            code_class = CodeClass(
+                                name=class_dict['name'],
+                                docstring=class_dict['docstring'],
+                                methods=[
+                                    CodeMethod(
+                                        name=m['name'],
+                                        docstring=m['docstring'],
+                                        parameters=m['parameters'],
+                                        file_path=class_dict['file_path'],
+                                        line_number=m['line_number'],
+                                        class_name=class_dict['name'],
+                                        return_type=m.get('return_type')
+                                    ) for m in class_dict['methods']
+                                ],
+                                file_path=class_dict['file_path'],
+                                line_number=class_dict['line_number'],
+                                base_classes=class_dict['base_classes'],
+                                attributes=class_dict['attributes']
+                            )
+                            self.classes.append(code_class)
+                        
+                        # Add parsed functions
+                        for func_dict in insightforge_data['functions']:
+                            func = CodeMethod(
+                                name=func_dict['name'],
+                                docstring=func_dict['docstring'],
+                                parameters=func_dict['parameters'],
+                                file_path=func_dict['file_path'],
+                                line_number=func_dict['line_number'],
+                                return_type=func_dict.get('return_type')
+                            )
+                            self.functions.append(func)
+                        
+                        # Add dependencies
+                        for dep in insightforge_data.get('dependencies', []):
+                            src = dep.get('source')
+                            target = dep.get('target')
+                            if src and target:
+                                if src not in self.dependencies:
+                                    self.dependencies[src] = set()
+                                self.dependencies[src].add(target)
+                    
+            except ImportError:
+                print("JavaScript/TypeScript parser not available, skipping JS/TS files")
+        
         return {
             'classes': [cls.to_dict() for cls in self.classes],
             'functions': [func.to_dict() for func in self.functions],

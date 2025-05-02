@@ -11,6 +11,17 @@ InsightForge é uma ferramenta de engenharia reversa automatizada que analisa c�
 - Python 3.10 ou superior
 - Pip (gerenciador de pacotes Python)
 
+#### Dependências Opcionais
+
+- **PHP**: biblioteca `phply` para análise de código PHP
+  ```bash
+  pip install phply
+  ```
+
+- **JavaScript/TypeScript**: Node.js e npm para análise de código JS/TS
+  - [Instale Node.js e npm](https://nodejs.org/en/download/)
+  - As dependências JavaScript serão instaladas automaticamente
+
 ### Passos para Instalação
 
 1. Clone o repositório:
@@ -111,7 +122,9 @@ User stories geradas incluem:
 ### Para Obter Melhores Resultados
 
 1. **Documente seu código:**
-   - Use docstrings para classes, métodos e funções
+   - **Python**: Use docstrings para classes, métodos e funções
+   - **PHP**: Use PHPDoc com @param, @return, etc.
+   - **JavaScript/TypeScript**: Use JSDoc ou TSDoc
    - Inclua descrições, parâmetros e retornos
    - Adicione exemplos de uso quando relevante
 
@@ -130,7 +143,9 @@ User stories geradas incluem:
 
 ## Exemplos
 
-### Exemplo de Classe bem Documentada
+### Exemplos de Código Bem Documentado
+
+#### Python
 
 ```python
 class UserService:
@@ -162,6 +177,62 @@ class UserService:
         # Implementação
 ```
 
+#### PHP
+
+```php
+/**
+ * Serviço para gerenciamento de usuários.
+ *
+ * Use Case: Autenticação de usuários no sistema
+ * Use Case: Gerenciamento de permissões de usuários
+ *
+ * Business Rule: Usuários inativos não podem fazer login
+ * Business Rule: Senhas devem ter pelo menos 8 caracteres
+ */
+class UserService
+{
+    /**
+     * Autentica um usuário no sistema.
+     *
+     * @param string $username Nome de usuário
+     * @param string $password Senha do usuário
+     * @return User|null Objeto usuário se autenticação bem-sucedida, null se falhar
+     * @throws AccountLockedException Se a conta estiver bloqueada
+     */
+    public function authenticate($username, $password)
+    {
+        // Implementação
+    }
+}
+```
+
+#### JavaScript/TypeScript
+
+```typescript
+/**
+ * Serviço para gerenciamento de usuários.
+ *
+ * Use Case: Autenticação de usuários no sistema
+ * Use Case: Gerenciamento de permissões de usuários
+ *
+ * Business Rule: Usuários inativos não podem fazer login
+ * Business Rule: Senhas devem ter pelo menos 8 caracteres
+ */
+class UserService {
+    /**
+     * Autentica um usuário no sistema.
+     *
+     * @param {string} username - Nome de usuário
+     * @param {string} password - Senha do usuário
+     * @returns {User|null} Objeto usuário se autenticação bem-sucedida, null se falhar
+     * @throws {AccountLockedException} Se a conta estiver bloqueada
+     */
+    authenticate(username, password) {
+        // Implementação
+    }
+}
+```
+
 ## Solução de Problemas
 
 ### Problemas Comuns
@@ -170,7 +241,11 @@ class UserService:
 
 - Verifique se o caminho fornecido está correto
 - Verifique se você tem permissões de leitura para os arquivos
-- Confirme que os arquivos têm a extensão correta (.py para Python)
+- Confirme que os arquivos têm a extensão correta:
+  - Python: `.py`
+  - PHP: `.php`
+  - JavaScript: `.js`, `.jsx`
+  - TypeScript: `.ts`, `.tsx`
 
 #### A documentação gerada está incompleta
 
@@ -182,6 +257,8 @@ class UserService:
 
 - Verifique a versão do Python (requer 3.10+)
 - Verifique se todas as dependências estão instaladas
+- Para código PHP: confirme que a biblioteca phply está instalada
+- Para código JavaScript/TypeScript: confirme que Node.js e npm estão instalados
 - Examine mensagens de erro detalhadas no console
 
 ## Recursos Adicionais
