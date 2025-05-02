@@ -388,7 +388,8 @@ class TemplateManager:
             "functions": parsed_data.get("functions", []),
             "business_rules": parsed_data.get("business_rules", []),
             "usecases": parsed_data.get("usecases", []),
-            "userstories": parsed_data.get("userstories", [])
+            "userstories": parsed_data.get("userstories", []),
+            "has_diagrams": os.path.exists(os.path.join(self.output_dir, "diagrams"))
         }
         
         output_path = os.path.join(self.output_dir, "index.md")
@@ -400,4 +401,47 @@ class TemplateManager:
             return output_path
         except Exception as e:
             self.logger.error(f"Error rendering index template: {str(e)}")
+            raise
+            
+    def render_diagram(self, diagram_type: str, context: Dict[str, Any]) -> str:
+        """
+        Render diagram documentation.
+        
+        Args:
+            diagram_type: Type of diagram ("class", "module", "sequence")
+            context: Diagram data
+            
+        Returns:
+            Path to generated file
+        """
+        template_map = {
+            "class": "class_diagram.md.j2",
+            "module": "module_diagram.md.j2",
+            "sequence": "sequence_diagram.md.j2",
+            "index": "diagram_index.md.j2"
+        }
+        
+        if diagram_type not in template_map:
+            raise ValueError(f"Unknown diagram type: {diagram_type}")
+            
+        template_name = template_map[diagram_type]
+        
+        # Determine output path
+        if "output_path" in context:
+            output_path = context["output_path"]
+        else:
+            diagrams_dir = os.path.join(self.output_dir, "diagrams")
+            os.makedirs(diagrams_dir, exist_ok=True)
+            
+            # Default filename based on diagram type and name
+            diagram_name = context.get("diagram_name", "diagram").lower().replace(" ", "_")
+            output_path = os.path.join(diagrams_dir, f"{diagram_type}_{diagram_name}.md")
+        
+        try:
+            content = self.loader.render_template(template_name, context)
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            return output_path
+        except Exception as e:
+            self.logger.error(f"Error rendering {diagram_type} diagram template: {str(e)}")
             raise

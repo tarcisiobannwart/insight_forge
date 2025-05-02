@@ -1,0 +1,32 @@
+{# Template for generating module diagram documentation #}
+{% block diagram_header %}
+# Module Diagram: {{ diagram_name }}
+{% endblock %}
+
+{% block diagram_description %}
+{% if diagram_description %}
+{{ diagram_description }}
+{% endif %}
+{% endblock %}
+
+{% block diagram_content %}
+{{ diagram_content }}
+{% endblock %}
+
+{% block diagram_modules %}
+{% if modules %}
+## Modules in this diagram
+
+{% for module in modules %}
+- {{ module.name }}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block diagram_notes %}
+{% if notes %}
+## Notes
+
+{{ notes }}
+{% endif %}
+{% endblock %}

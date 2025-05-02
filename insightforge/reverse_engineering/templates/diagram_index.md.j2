@@ -1,0 +1,56 @@
+{# Template for generating diagram index documentation #}
+{% block index_header %}
+# Diagram Index
+{% endblock %}
+
+{% block class_diagrams %}
+{% if class_diagrams %}
+## Class Diagrams
+
+{% for diagram in class_diagrams %}
+- [{{ diagram.name }}]({{ diagram.path }})
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block module_diagrams %}
+{% if module_diagrams %}
+## Module Diagrams
+
+{% for diagram in module_diagrams %}
+- [{{ diagram.name }}]({{ diagram.path }})
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block sequence_diagrams %}
+{% if sequence_diagrams %}
+## Sequence Diagrams
+
+{% for diagram in sequence_diagrams %}
+- [{{ diagram.name }}]({{ diagram.path }})
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block legend %}
+## Diagram Legend
+
+### Class Diagram Notation
+
+```
+A <|-- B     : A inherits from B
+A *-- B      : A contains B (composition)
+A o-- B      : A has B (aggregation)
+A --> B      : A uses B (dependency)
+A -- B       : A relates to B (association)
+```
+
+### Module Diagram Notation
+
+In module diagrams, arrows indicate dependencies between modules:
+
+```
+A --> B      : Module A depends on Module B
+```
+{% endblock %}

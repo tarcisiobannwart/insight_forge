@@ -1,0 +1,42 @@
+{# Template for generating sequence diagram documentation #}
+{% block diagram_header %}
+# Sequence Diagram: {{ diagram_name }}
+{% endblock %}
+
+{% block diagram_description %}
+{% if diagram_description %}
+{{ diagram_description }}
+{% endif %}
+{% endblock %}
+
+{% block diagram_content %}
+{{ diagram_content }}
+{% endblock %}
+
+{% block diagram_flow %}
+{% if flow %}
+## Flow: {{ flow }}
+
+{% if flow_description %}
+{{ flow_description }}
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block diagram_components %}
+{% if components %}
+## Components in this diagram
+
+{% for component in components %}
+- {{ component }}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block diagram_notes %}
+{% if notes %}
+## Notes
+
+{{ notes }}
+{% endif %}
+{% endblock %}

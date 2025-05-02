@@ -1,0 +1,32 @@
+{# Template for generating class diagram documentation #}
+{% block diagram_header %}
+# Class Diagram: {{ diagram_name }}
+{% endblock %}
+
+{% block diagram_description %}
+{% if diagram_description %}
+{{ diagram_description }}
+{% endif %}
+{% endblock %}
+
+{% block diagram_content %}
+{{ diagram_content }}
+{% endblock %}
+
+{% block diagram_classes %}
+{% if classes %}
+## Classes in this diagram
+
+{% for class in classes %}
+- [{{ class.name }}](../classes/{{ class.name }}.md)
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block diagram_notes %}
+{% if notes %}
+## Notes
+
+{{ notes }}
+{% endif %}
+{% endblock %}

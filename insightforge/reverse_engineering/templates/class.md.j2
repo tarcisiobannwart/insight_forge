@@ -11,6 +11,16 @@
 {% endif %}
 {% endblock %}
 
+{% block class_diagrams %}
+{% if diagrams %}
+## Diagrams
+
+{% for diagram in diagrams %}
+- [{{ diagram.name }}]({{ diagram.path }})
+{% endfor %}
+{% endif %}
+{% endblock %}
+
 {% block class_source %}
 ## Source
 
