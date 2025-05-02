@@ -290,7 +290,65 @@ class CodeParser:
             rel_path = os.path.relpath(file_path, self.project_path)
             self._process_dependencies(rel_path, parser.imports)
         
-        # TODO: Add support for other languages
+        # Find PHP files
+        php_files = self._find_files("**/*.php")
+        
+        # Parse PHP files
+        try:
+            from .php_parser import PHPParser, adapt_php_to_insightforge
+            
+            for file_path in php_files:
+                parser = PHPParser(file_path)
+                classes, functions = parser.parse()
+                
+                if classes or functions:
+                    # Convert PHP parsed data to InsightForge format
+                    php_data = {
+                        'classes': classes,
+                        'functions': functions
+                    }
+                    
+                    insightforge_data = adapt_php_to_insightforge(php_data)
+                    
+                    # Add parsed classes to our collection
+                    for class_dict in insightforge_data['classes']:
+                        # Convert dict back to CodeClass
+                        code_class = CodeClass(
+                            name=class_dict['name'],
+                            docstring=class_dict['docstring'],
+                            methods=[
+                                CodeMethod(
+                                    name=m['name'],
+                                    docstring=m['docstring'],
+                                    parameters=m['parameters'],
+                                    file_path=class_dict['file_path'],
+                                    line_number=m['line_number'],
+                                    class_name=class_dict['name'],
+                                    return_type=m.get('return_type')
+                                ) for m in class_dict['methods']
+                            ],
+                            file_path=class_dict['file_path'],
+                            line_number=class_dict['line_number'],
+                            base_classes=class_dict['base_classes'],
+                            attributes=class_dict['attributes']
+                        )
+                        self.classes.append(code_class)
+                    
+                    # Add parsed functions
+                    for func_dict in insightforge_data['functions']:
+                        func = CodeMethod(
+                            name=func_dict['name'],
+                            docstring=func_dict['docstring'],
+                            parameters=func_dict['parameters'],
+                            file_path=func_dict['file_path'],
+                            line_number=func_dict['line_number'],
+                            return_type=func_dict.get('return_type')
+                        )
+                        self.functions.append(func)
+                
+                # TODO: Extract dependencies between PHP files
+        except ImportError:
+            print("PHP parser not available, skipping PHP files")
         
         return {
             'classes': [cls.to_dict() for cls in self.classes],

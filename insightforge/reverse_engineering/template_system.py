@@ -260,13 +260,36 @@ class TemplateManager:
         Returns:
             Path to generated file
         """
-        template_name = "class.md.j2"
+        # Determine if this is a PHP class
+        is_php_class = False
+        file_path = class_data.get('file_path', '')
+        
+        # Check if file has PHP extension
+        if file_path.endswith('.php'):
+            is_php_class = True
+            template_name = "php_class.md.j2"
+        else:
+            template_name = "class.md.j2"
+        
+        # Try to load the template, fallback to default if not found
+        if not self.loader.template_exists(template_name):
+            template_name = "class.md.j2"
+            
         context = {"class": class_data}
         
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
         
-        output_path = os.path.join(output_dir, f"{class_data['name']}.md")
+        # Define filename
+        class_name = class_data['name']
+        
+        # Add language prefix for PHP classes if output is in same directory
+        if is_php_class and not output_subdir.endswith('php'):
+            filename = f"php_{class_name}.md"
+        else:
+            filename = f"{class_name}.md"
+            
+        output_path = os.path.join(output_dir, filename)
         
         try:
             content = self.loader.render_template(template_name, context)
@@ -288,13 +311,36 @@ class TemplateManager:
         Returns:
             Path to generated file
         """
-        template_name = "function.md.j2"
+        # Determine if this is a PHP function
+        is_php_function = False
+        file_path = function_data.get('file_path', '')
+        
+        # Check if file has PHP extension
+        if file_path.endswith('.php'):
+            is_php_function = True
+            template_name = "php_function.md.j2"
+        else:
+            template_name = "function.md.j2"
+        
+        # Try to load the template, fallback to default if not found
+        if not self.loader.template_exists(template_name):
+            template_name = "function.md.j2"
+            
         context = {"function": function_data}
         
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
         
-        output_path = os.path.join(output_dir, f"{function_data['name']}.md")
+        # Define filename
+        function_name = function_data['name']
+        
+        # Add language prefix for PHP functions if output is in same directory
+        if is_php_function and not output_subdir.endswith('php'):
+            filename = f"php_{function_name}.md"
+        else:
+            filename = f"{function_name}.md"
+            
+        output_path = os.path.join(output_dir, filename)
         
         try:
             content = self.loader.render_template(template_name, context)

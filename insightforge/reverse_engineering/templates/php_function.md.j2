@@ -1,0 +1,28 @@
+{# Template for generating PHP function documentation #}
+{% extends "function.md.j2" %}
+
+{% block function_header %}
+# Function: `{{ function.name }}({% for param in function.parameters %}{{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})`
+
+{% if function.namespace %}
+**Namespace**: `{{ function.namespace }}`
+{% endif %}
+{% endblock %}
+
+{% block function_parameters %}
+{% if function.parameters %}
+## Parameters
+
+{% for param in function.parameters %}
+- **{{ param.name }}**{% if param.type %}: {{ param.type }}{% endif %}{% if param.default %} = {{ param.default }}{% endif %}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block function_returns %}
+{% if function.return_type %}
+## Returns
+
+{{ function.return_type }}
+{% endif %}
+{% endblock %}

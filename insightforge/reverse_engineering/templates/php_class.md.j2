@@ -1,0 +1,85 @@
+{# Template for generating PHP class documentation #}
+{% extends "class.md.j2" %}
+
+{% block class_header %}
+{% if class.is_interface %}
+# Interface: {{ class.name }}
+{% elif class.is_trait %}
+# Trait: {{ class.name }}
+{% else %}
+# Class: {{ class.name }}
+{% endif %}
+
+{% if class.namespace %}
+**Namespace**: `{{ class.namespace }}`
+{% endif %}
+{% endblock %}
+
+{% block class_inheritance %}
+{% if class.extends %}
+## Extends
+
+{% for base in class.extends %}
+- {{ base }}{% endfor %}
+{% endif %}
+
+{% if class.implements %}
+## Implements
+
+{% for interface in class.implements %}
+- {{ interface }}{% endfor %}
+{% endif %}
+
+{% if class.uses %}
+## Uses Traits
+
+{% for trait in class.uses %}
+- {{ trait }}{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block class_attributes %}
+{% if class.properties %}
+## Properties
+
+{% for prop in class.properties %}
+- **{{ prop.name }}**: {% if prop.type %}{{ prop.type }}{% else %}mixed{% endif %}{% if prop.visibility %} (`{{ prop.visibility }}`){% endif %}{% if prop.is_static %} `static`{% endif %}{% if prop.docstring %} - {{ prop.docstring }}{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if class.constants %}
+## Constants
+
+{% for const in class.constants %}
+- **{{ const.name }}** = `{{ const.value }}`
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block class_methods %}
+{% if class.methods %}
+## Methods
+
+{% for method in class.methods %}
+### {{ method.name }}({% for param in method.parameters %}{{ param.name }}{% if not loop.last %}, {% endif %}{% endfor %})
+
+{% if method.docstring %}
+{{ method.docstring }}
+{% endif %}
+
+**Visibility**: {{ method.visibility }}{% if method.is_static %} `static`{% endif %}{% if method.is_abstract %} `abstract`{% endif %}
+
+{% if method.parameters %}
+**Parameters**:
+{% for param in method.parameters %}
+- `{{ param.name }}`{% if param.type %}: {{ param.type }}{% endif %}{% if param.default %} = {{ param.default }}{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if method.return_type %}
+**Returns**: {{ method.return_type }}
+{% endif %}
+
+{% endfor %}
+{% endif %}
+{% endblock %}
