@@ -1,0 +1,134 @@
+# InsightForge Configuration File
+# This is the default configuration file for InsightForge
+
+# General settings
+general:
+  # Output directory for generated documentation
+  output_dir: "./output"
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  log_level: "INFO"
+  # Configuration profile
+  profile: "default"
+
+# Code parsing settings
+parser:
+  # Directories to exclude from analysis
+  exclude_dirs:
+    - "venv"
+    - "env"
+    - ".git"
+    - ".github"
+    - "node_modules"
+    - "__pycache__"
+    - ".vscode"
+    - ".idea"
+  # Files to exclude from analysis
+  exclude_files:
+    - "*.pyc"
+    - "*.pyo"
+    - "*.pyd"
+    - "*.so"
+    - "*.dylib"
+    - "*.dll"
+    - "*.egg-info"
+    - "*.egg"
+    - "*.whl"
+  # Language-specific settings
+  languages:
+    # Python settings
+    python:
+      enabled: true
+      extensions: [".py"]
+      detect_docstrings: true
+      detect_types: true
+    # PHP settings
+    php:
+      enabled: true
+      extensions: [".php"]
+      detect_docstrings: true
+    # JavaScript settings (disabled by default)
+    javascript:
+      enabled: false
+      extensions: [".js", ".jsx"]
+      detect_jsdoc: true
+    # TypeScript settings (disabled by default)
+    typescript:
+      enabled: false
+      extensions: [".ts", ".tsx"]
+      detect_tsdoc: true
+
+# Documentation generator settings
+doc_generator:
+  # Output format for documentation
+  output_format: "markdown"
+  # Custom template directory (null = use default templates)
+  template_dir: null
+  # Generate diagrams
+  generate_diagrams: true
+  # Diagram format
+  diagram_format: "mermaid"
+  # Types of diagrams to generate
+  diagram_types: ["class", "module", "sequence"]
+  # Index template file
+  index_template: "index.md.j2"
+  # Include source links in documentation
+  include_source_links: true
+
+# Business rules extractor settings
+business_rules:
+  # Enable business rules extraction
+  enabled: true
+  # Extract from code (e.g., validation checks)
+  extract_from_code: true
+  # Extract from comments
+  extract_from_comments: true
+  # Extract from docstrings
+  extract_from_docstrings: true
+  # Patterns to identify business rules
+  patterns:
+    - "Business Rule:"
+    - "BR:"
+    - "must"
+    - "should"
+    - "required"
+    - "cannot"
+    - "must not"
+
+# Use case extractor settings
+usecase_extractor:
+  # Enable use case extraction
+  enabled: true
+  # Extract from docstrings
+  extract_from_docstrings: true
+  # Extract from comments
+  extract_from_comments: true
+  # Extract from method names
+  extract_from_method_names: true
+
+# Backlog builder settings
+backlog_builder:
+  # Enable backlog building
+  enabled: true
+  # Output format
+  format: "markdown"
+  # Include priority in backlog
+  include_priority: true
+  # Include story points in backlog
+  include_story_points: true
+
+# LLM integration settings
+llm:
+  # Enable LLM integration
+  enabled: false
+  # LLM provider
+  provider: "ollama"
+  # Model to use
+  model: "llama2"
+  # API endpoint
+  endpoint: "http://localhost:11434/api"
+  # Maximum tokens to generate
+  max_tokens: 1024
+  # Temperature (0-1)
+  temperature: 0.7
+  # Embeddings model
+  embeddings_model: "all-MiniLM-L6-v2"

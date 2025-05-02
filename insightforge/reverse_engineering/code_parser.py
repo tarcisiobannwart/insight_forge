@@ -8,6 +8,7 @@ starting with Python support.
 import os
 import ast
 import glob
+import fnmatch
 from typing import Dict, List, Optional, Any, Tuple, Set
 from dataclasses import dataclass, field
 
@@ -266,12 +267,21 @@ class PythonAstParser:
 class CodeParser:
     """Main code parser that supports multiple languages."""
     
-    def __init__(self, project_path: str):
-        """Initialize with a project path."""
+    def __init__(self, project_path: str, exclude_dirs: List[str] = None, exclude_files: List[str] = None):
+        """
+        Initialize with a project path.
+        
+        Args:
+            project_path: Path to the project directory
+            exclude_dirs: List of directories to exclude from analysis
+            exclude_files: List of file patterns to exclude from analysis
+        """
         self.project_path = project_path
         self.classes: List[CodeClass] = []
         self.functions: List[CodeMethod] = []
         self.dependencies: Dict[str, Set[str]] = {}  # File to its dependencies
+        self.exclude_dirs = exclude_dirs or []
+        self.exclude_files = exclude_files or []
     
     def parse(self) -> Dict[str, Any]:
         """Parse the project for code elements."""
@@ -381,8 +391,34 @@ class CodeParser:
                         break
     
     def _find_files(self, pattern: str) -> List[str]:
-        """Find files matching the pattern."""
-        return glob.glob(
+        """
+        Find files matching the pattern, excluding specified directories and files.
+        
+        Args:
+            pattern: Glob pattern to match files
+            
+        Returns:
+            List of file paths matching the pattern
+        """
+        all_files = glob.glob(
             os.path.join(self.project_path, pattern),
             recursive=True
         )
+        
+        # Filter out excluded directories and files
+        filtered_files = []
+        for file_path in all_files:
+            # Convert to relative path for easier matching
+            rel_path = os.path.relpath(file_path, self.project_path)
+            
+            # Skip if in excluded directory
+            if any(part for part in rel_path.split(os.sep) if part in self.exclude_dirs):
+                continue
+                
+            # Skip if matches excluded file pattern
+            if any(fnmatch.fnmatch(os.path.basename(file_path), pattern) for pattern in self.exclude_files):
+                continue
+                
+            filtered_files.append(file_path)
+            
+        return filtered_files

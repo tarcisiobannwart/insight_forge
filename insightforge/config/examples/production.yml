@@ -1,0 +1,85 @@
+# InsightForge Production Configuration
+# This configuration is optimized for production use
+
+general:
+  output_dir: "/var/www/docs"
+  log_level: "WARNING"
+  profile: "production"
+
+parser:
+  exclude_dirs:
+    - "venv"
+    - "env"
+    - ".git"
+    - ".github"
+    - "node_modules"
+    - "__pycache__"
+    - ".vscode"
+    - ".idea"
+    - "tests"
+    - "test"
+    - "docs"
+  exclude_files:
+    - "*.pyc"
+    - "*.pyo"
+    - "*.pyd"
+    - "*.so"
+    - "*.dylib"
+    - "*.dll"
+    - "*.egg-info"
+    - "*.egg"
+    - "*.whl"
+    - "*.min.js"
+    - "*.min.css"
+  languages:
+    python:
+      enabled: true
+      extensions: [".py"]
+      detect_docstrings: true
+      detect_types: true
+    php:
+      enabled: true
+      extensions: [".php"]
+      detect_docstrings: true
+    javascript:
+      enabled: true
+      extensions: [".js", ".jsx"]
+      detect_jsdoc: true
+    typescript:
+      enabled: true
+      extensions: [".ts", ".tsx"]
+      detect_tsdoc: true
+
+doc_generator:
+  output_format: "html"
+  template_dir: "/etc/insightforge/templates"
+  generate_diagrams: true
+  diagram_format: "mermaid"
+  diagram_types: ["class", "module", "sequence", "component"]
+  include_source_links: true
+
+business_rules:
+  enabled: true
+  extract_from_code: true
+  extract_from_comments: true
+  extract_from_docstrings: true
+
+usecase_extractor:
+  enabled: true
+  extract_from_docstrings: true
+  extract_from_comments: true
+  extract_from_method_names: true
+
+backlog_builder:
+  enabled: true
+  format: "json"
+  include_priority: true
+  include_story_points: true
+
+llm:
+  enabled: true
+  provider: "ollama"
+  model: "codellama"
+  endpoint: "http://localhost:11434/api"
+  max_tokens: 2048
+  temperature: 0.5

@@ -1,0 +1,29 @@
+# InsightForge Minimal Configuration
+# This is a minimal configuration for InsightForge
+
+general:
+  output_dir: "./docs"
+  log_level: "INFO"
+
+parser:
+  exclude_dirs:
+    - "venv"
+    - "node_modules"
+  languages:
+    python:
+      enabled: true
+      extensions: [".py"]
+
+doc_generator:
+  output_format: "markdown"
+  generate_diagrams: true
+
+business_rules:
+  enabled: true
+
+usecase_extractor:
+  enabled: true
+
+backlog_builder:
+  enabled: true
+  format: "markdown"
