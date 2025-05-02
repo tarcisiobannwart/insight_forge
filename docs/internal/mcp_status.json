@@ -12,15 +12,17 @@
   "components": {
     "code_parser": {
       "implemented": true,
-      "completion": 60,
+      "completion": 80,
       "pending_features": [
-        "Análise de imports (parcialmente implementado)",
+        "Análise de imports (implementado)",
         "Detecção de atributos (implementado)",
-        "Suporte multi-linguagem"
+        "Suporte multi-linguagem (PHP implementado)"
       ],
       "planned_tasks": [
-        "TASK-CP-01: Aprimorar PythonAstParser (parcialmente concluído)",
-        "TASK-CP-02: Implementar tratamento de erros robusto"
+        "TASK-CP-01: Aprimorar PythonAstParser (concluído)",
+        "TASK-CP-02: Implementar suporte a PHP (concluído)",
+        "TASK-CP-03: Implementar tratamento de erros robusto",
+        "TASK-CP-04: Estender suporte para outras linguagens"
       ]
     },
     "doc_generator": {
@@ -61,15 +63,16 @@
       ]
     },
     "business_rules_extractor": {
-      "implemented": false,
-      "completion": 0,
+      "implemented": true,
+      "completion": 70,
       "pending_features": [
-        "Implementação inicial",
-        "Detecção em validações",
-        "Detecção em comentários"
+        "Refinar detecção em validações",
+        "Análise semântica de regras",
+        "Detecção em linguagens adicionais"
       ],
       "planned_tasks": [
-        "TASK-RE-02: Implementar extrator de regras de negócio"
+        "TASK-RE-02: Implementar extrator de regras de negócio (concluído)",
+        "TASK-RE-05: Expandir capacidades do extrator de regras"
       ]
     },
     "ollama_integration": {
@@ -152,16 +155,16 @@
     }
   ],
   "priorities": [
-    "Extração de regras de negócio",
-    "Sistema de templates para documentação",
-    "Finalizar testes unitários",
-    "Geração de diagramas Mermaid"
+    "Implementar sistema de configuração",
+    "Estender suporte para outras linguagens",
+    "Integração com LLM",
+    "Melhorar gerador de backlog"
   ],
   "stats": {
-    "total_tasks": 20,
-    "completed_tasks": 0,
-    "in_progress_tasks": 2,
-    "planned_tasks": 18,
-    "estimated_days": 67
+    "total_tasks": 25,
+    "completed_tasks": 8,
+    "in_progress_tasks": 1,
+    "planned_tasks": 16,
+    "estimated_days": 55
   }
 }
