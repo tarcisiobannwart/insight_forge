@@ -5,7 +5,9 @@ Tests for the code_parser module.
 import os
 import tempfile
 import pytest
-from insightforge.reverse_engineering.code_parser import PythonAstParser, CodeParser
+import ast
+from pathlib import Path
+from insightforge.reverse_engineering.code_parser import PythonAstParser, CodeParser, CodeClass, CodeMethod
 
 
 class TestPythonAstParser:
@@ -236,6 +238,144 @@ class AttributeClass:
             os.unlink(temp_file_path)
 
 
+class TestCodeClass:
+    """Tests for the CodeClass class."""
+    
+    def test_init(self):
+        """Test initialization of CodeClass."""
+        code_class = CodeClass(
+            name="TestClass",
+            docstring="Test docstring",
+            line_number=10,
+            file_path="/path/to/file.py"
+        )
+        
+        assert code_class.name == "TestClass"
+        assert code_class.docstring == "Test docstring"
+        assert code_class.line_number == 10
+        assert code_class.file_path == "/path/to/file.py"
+        assert code_class.methods == []
+        assert code_class.base_classes == []
+        assert code_class.attributes == []
+    
+    def test_add_method(self):
+        """Test adding a method to a class."""
+        code_class = CodeClass(
+            name="TestClass",
+            docstring="Test docstring",
+            line_number=10,
+            file_path="/path/to/file.py"
+        )
+        
+        method = CodeMethod(
+            name="test_method",
+            docstring="Test method docstring",
+            line_number=15,
+            parameters=["self", "param1"]
+        )
+        
+        code_class.add_method(method)
+        
+        assert len(code_class.methods) == 1
+        assert code_class.methods[0] == method
+    
+    def test_add_attribute(self):
+        """Test adding an attribute to a class."""
+        code_class = CodeClass(
+            name="TestClass",
+            docstring="Test docstring",
+            line_number=10,
+            file_path="/path/to/file.py"
+        )
+        
+        code_class.add_attribute("test_attr", "str", False, "Attribute docstring")
+        
+        assert len(code_class.attributes) == 1
+        assert code_class.attributes[0]['name'] == "test_attr"
+        assert code_class.attributes[0]['type'] == "str"
+        assert code_class.attributes[0]['is_class_var'] is False
+        assert code_class.attributes[0]['docstring'] == "Attribute docstring"
+    
+    def test_to_dict(self):
+        """Test converting a CodeClass to dictionary."""
+        code_class = CodeClass(
+            name="TestClass",
+            docstring="Test docstring",
+            line_number=10,
+            file_path="/path/to/file.py"
+        )
+        
+        method = CodeMethod(
+            name="test_method",
+            docstring="Test method docstring",
+            line_number=15,
+            parameters=["self", "param1"]
+        )
+        
+        code_class.add_method(method)
+        code_class.add_attribute("test_attr", "str", False)
+        code_class.base_classes = ["BaseClass"]
+        
+        class_dict = code_class.to_dict()
+        
+        assert class_dict['name'] == "TestClass"
+        assert class_dict['docstring'] == "Test docstring"
+        assert class_dict['line_number'] == 10
+        assert class_dict['file_path'] == "/path/to/file.py"
+        assert len(class_dict['methods']) == 1
+        assert len(class_dict['attributes']) == 1
+        assert len(class_dict['base_classes']) == 1
+
+
+class TestCodeMethod:
+    """Tests for the CodeMethod class."""
+    
+    def test_init(self):
+        """Test initialization of CodeMethod."""
+        method = CodeMethod(
+            name="test_method",
+            docstring="Test method docstring",
+            line_number=15,
+            parameters=["self", "param1"]
+        )
+        
+        assert method.name == "test_method"
+        assert method.docstring == "Test method docstring"
+        assert method.line_number == 15
+        assert method.parameters == ["self", "param1"]
+        assert method.return_type is None
+    
+    def test_init_with_return_type(self):
+        """Test initialization with return type."""
+        method = CodeMethod(
+            name="test_method",
+            docstring="Test method docstring",
+            line_number=15,
+            parameters=["self", "param1"],
+            return_type="int"
+        )
+        
+        assert method.return_type == "int"
+    
+    def test_to_dict(self):
+        """Test converting a CodeMethod to dictionary."""
+        method = CodeMethod(
+            name="test_method",
+            docstring="Test method docstring",
+            line_number=15,
+            parameters=["self", "param1"],
+            return_type="int"
+        )
+        
+        method_dict = method.to_dict()
+        
+        assert method_dict['name'] == "test_method"
+        assert method_dict['docstring'] == "Test method docstring"
+        assert method_dict['line_number'] == 15
+        assert method_dict['parameters'] == ["self", "param1"]
+        assert method_dict['return_type'] == "int"
+
+
 class TestCodeParser:
     """Tests for the CodeParser class."""
     
@@ -291,3 +431,121 @@ class ChildClass(BaseClass):
         # Check that dependencies exist, but don't assert specific content
         # since our test environment may not resolve paths correctly
         assert 'dependencies' in result
+    
+    def test_parse_with_custom_extensions(self, tmp_path):
+        """Test parsing with custom file extensions."""
+        # Create a temporary project structure
+        project_dir = tmp_path / "test_project"
+        project_dir.mkdir()
+        
+        # Create a file with a custom extension
+        custom_file = project_dir / "custom.pyx"  # Cython extension
+        custom_file.write_text("""
+class CustomClass:
+    \"\"\"A class in a custom extension file.\"\"\"
+    
+    def custom_method(self):
+        pass
+""")
+        
+        # Create a Python file for comparison
+        python_file = project_dir / "regular.py"
+        python_file.write_text("""
+class RegularClass:
+    \"\"\"A class in a regular Python file.\"\"\"
+    
+    def regular_method(self):
+        pass
+""")
+        
+        # Parse with default extensions (should find only the .py file)
+        parser = CodeParser(str(project_dir))
+        result = parser.parse()
+        
+        # Check that only the regular Python class was found
+        classes = result['classes']
+        assert len(classes) == 1
+        assert classes[0]['name'] == 'RegularClass'
+        
+        # Parse with custom extensions
+        parser = CodeParser(str(project_dir), file_extensions=['.py', '.pyx'])
+        result = parser.parse()
+        
+        # Check that both classes were found
+        classes = result['classes']
+        assert len(classes) == 2
+        class_names = [cls['name'] for cls in classes]
+        assert 'RegularClass' in class_names
+        assert 'CustomClass' in class_names
+    
+    def test_parse_with_exclusions(self, tmp_path):
+        """Test parsing with directory exclusions."""
+        # Create a temporary project structure
+        project_dir = tmp_path / "test_project"
+        project_dir.mkdir()
+        
+        # Create a main directory
+        main_dir = project_dir / "main"
+        main_dir.mkdir()
+        
+        # Create a test directory that should be excluded
+        test_dir = project_dir / "tests"
+        test_dir.mkdir()
+        
+        # Create a class in main
+        main_file = main_dir / "main.py"
+        main_file.write_text("""
+class MainClass:
+    \"\"\"A class in the main directory.\"\"\"
+    
+    def main_method(self):
+        pass
+""")
+        
+        # Create a class in tests
+        test_file = test_dir / "test.py"
+        test_file.write_text("""
+class TestClass:
+    \"\"\"A class in the test directory.\"\"\"
+    
+    def test_method(self):
+        pass
+""")
+        
+        # Parse with exclusions
+        parser = CodeParser(str(project_dir), exclude_dirs=['tests'])
+        result = parser.parse()
+        
+        # Check that only the main class was found
+        classes = result['classes']
+        assert len(classes) == 1
+        assert classes[0]['name'] == 'MainClass'
+    
+    def test_parse_with_complex_project(self, complex_project):
+        """Test parsing a more complex project structure."""
+        # Parse the project
+        parser = CodeParser(str(complex_project))
+        result = parser.parse()
+        
+        # Verify the results
+        assert 'classes' in result
+        assert 'functions' in result
+        
+        # Count classes (should have 3 classes: Model, User, UserService)
+        classes = result['classes']
+        assert len(classes) >= 3
+        
+        # Check for specific classes
+        class_names = [cls['name'] for cls in classes]
+        assert 'Model' in class_names
+        assert 'User' in class_names
+        assert 'UserService' in class_names
+        
+        # Check for inheritance
+        user_class = next(cls for cls in classes if cls['name'] == 'User')
+        assert 'Model' in user_class['base_classes']
+        
+        # Check for functions (main function)
+        functions = result['functions']
+        function_names = [fn['name'] for fn in functions]
+        assert 'main' in function_names
