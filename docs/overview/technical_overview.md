@@ -84,14 +84,17 @@ O `BacklogBuilder` gera user stories e épicos a partir dos casos de uso e estru
 - Sem estimativa automática de story points
 - Agrupamento simples sem análise de domínio
 
-### 5. LLM Integration (Planejado)
+### 5. LLM Integration
 
-A integração com modelos de linguagem permitirá consultas em linguagem natural sobre o projeto.
+A integração com modelos de linguagem permite consultas em linguagem natural sobre o projeto e oferece recursos avançados de compreensão de código.
 
-**Recursos planejados:**
+**Recursos implementados:**
 - Integração com Ollama para processamento local
-- Embeddings para pesquisa semântica
-- Resposta a perguntas sobre o projeto
+- Embeddings para pesquisa semântica de código
+- Resposta a perguntas sobre o projeto em linguagem natural
+- Explicação de trechos de código
+- Sugestão de melhorias de código
+- Geração automática de documentação
 
 ## Stack Tecnológica
 
@@ -100,6 +103,10 @@ A integração com modelos de linguagem permitirá consultas em linguagem natura
   - Python: ast (biblioteca padrão)
   - PHP: phply (opcional)
   - JavaScript/TypeScript: Node.js e @babel/parser (opcional)
+- **Integração LLM**:
+  - Ollama para modelos locais
+  - Embeddings para busca semântica
+  - Numpy para cálculos de similaridade
 - **Manipulação de Arquivos**: pathlib, glob
 - **Interface CLI**: argparse, rich
 - **Formatação**: markdown, pyyaml
