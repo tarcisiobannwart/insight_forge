@@ -1,0 +1,90 @@
+{# 
+   Example of a custom business rule template with enhanced formatting
+   This demonstrates how to customize the business rule documentation template
+#}
+
+{% extends "businessrule.md.j2" %}
+
+{% block rule_header %}
+# Regra de Negócio: {{ rule.id }}
+
+## {{ rule.name }}
+
+{% if rule.severity == "critical" %}
+⚠️ **REGRA CRÍTICA**
+{% elif rule.severity == "high" %}
+⚠️ **REGRA DE ALTA PRIORIDADE**
+{% endif %}
+{% endblock %}
+
+{% block rule_description %}
+{% if rule.type == "validation" %}
+### Validação
+
+{{ rule.description }}
+{% elif rule.type == "calculation" %}
+### Cálculo
+
+{{ rule.description }}
+{% elif rule.type == "constraint" %}
+### Restrição
+
+{{ rule.description }}
+{% else %}
+### Descrição
+
+{{ rule.description }}
+{% endif %}
+{% endblock %}
+
+{% block rule_metadata %}
+<table>
+  <tr>
+    <th>Atributo</th>
+    <th>Valor</th>
+  </tr>
+  <tr>
+    <td>Tipo</td>
+    <td>{{ rule.type }}</td>
+  </tr>
+  <tr>
+    <td>Severidade</td>
+    <td>{{ rule.severity }}</td>
+  </tr>
+  <tr>
+    <td>Origem</td>
+    <td>{{ rule.source }}</td>
+  </tr>
+  {% if rule.code_component %}
+  <tr>
+    <td>Componente</td>
+    <td>{{ rule.code_component }}</td>
+  </tr>
+  {% endif %}
+</table>
+{% endblock %}
+
+{% block rule_implementation %}
+### Implementação
+
+```python
+# Arquivo: {{ rule.file_path }}
+# Linha: {{ rule.line_number }}
+
+# Pseudocódigo representando a regra:
+def validate_{{ rule.id|lower|replace("-", "_") }}(data):
+    """{{ rule.description }}"""
+    if not comply_with_rule(data):
+        raise ValidationError("{{ rule.description }}")
+```
+{% endblock %}
+
+{% block rule_related %}
+{% if rule.related_rules %}
+### Regras Relacionadas
+
+{% for related_id in rule.related_rules %}
+- [{{ related_id }}]({{ related_id }}.md)
+{% endfor %}
+{% endif %}
+{% endblock %}

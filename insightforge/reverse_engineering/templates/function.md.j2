@@ -1,0 +1,43 @@
+{# Template for generating function documentation #}
+{% block function_header %}
+# Function: `{{ function.name }}({% for param in function.parameters %}{{ param }}{% if not loop.last %}, {% endif %}{% endfor %})`
+{% endblock %}
+
+{% block function_description %}
+{% if function.docstring %}
+## Description
+
+{{ function.docstring }}
+{% endif %}
+{% endblock %}
+
+{% block function_source %}
+## Source
+
+- **File**: `{{ function.file_path }}`
+- **Line**: {{ function.line_number }}
+{% endblock %}
+
+{% block function_parameters %}
+{% if function.parameters %}
+## Parameters
+
+{% for param in function.parameters %}
+- **{{ param }}**{% if function.parameter_types and function.parameter_types[param] %}: {{ function.parameter_types[param] }}{% endif %}{% if function.parameter_docs and function.parameter_docs[param] %} - {{ function.parameter_docs[param] }}{% endif %}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block function_returns %}
+{% if function.return_type %}
+## Returns
+
+{{ function.return_type }}
+{% endif %}
+{% endblock %}
+
+{% block function_footer %}
+{% if function.code_component %}
+{% include "partials/component_links.md.j2" %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,45 @@
+{# Template for generating main index documentation #}
+{% block index_header %}
+# {{ project_name }} Documentation
+{% endblock %}
+
+{% block index_description %}
+{{ project_description }}
+{% endblock %}
+
+{% block index_links %}
+## Contents
+
+- [Overview](overview.md)
+{% if classes %}
+- [Classes](classes/index.md)
+{% endif %}
+{% if functions %}
+- [Functions](functions/index.md)
+{% endif %}
+{% if business_rules %}
+- [Business Rules](business_rules/index.md)
+{% endif %}
+{% if usecases %}
+- [Use Cases](usecases/index.md)
+{% endif %}
+{% if userstories %}
+- [User Stories](userstories/index.md)
+{% endif %}
+{% endblock %}
+
+{% block index_stats %}
+## Project Statistics
+
+- **Classes**: {{ classes|length }}
+- **Functions**: {{ functions|length }}
+{% if business_rules %}
+- **Business Rules**: {{ business_rules|length }}
+{% endif %}
+{% if usecases %}
+- **Use Cases**: {{ usecases|length }}
+{% endif %}
+{% if userstories %}
+- **User Stories**: {{ userstories|length }}
+{% endif %}
+{% endblock %}

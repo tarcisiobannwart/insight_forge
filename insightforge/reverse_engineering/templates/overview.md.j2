@@ -1,0 +1,44 @@
+{# Template for generating project overview documentation #}
+{% block overview_header %}
+# Project Overview
+{% endblock %}
+
+{% block overview_summary %}
+## Summary
+
+- **Classes**: {{ classes|length }}
+- **Functions**: {{ functions|length }}
+{% if business_rules %}
+- **Business Rules**: {{ business_rules|length }}
+{% endif %}
+{% endblock %}
+
+{% block overview_classes %}
+{% if classes %}
+## Classes
+
+{% for cls in classes %}
+- [{{ cls.name }}](classes/{{ cls.name }}.md)
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block overview_functions %}
+{% if functions %}
+## Functions
+
+{% for func in functions %}
+- [{{ func.name }}](functions/{{ func.name }}.md)
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block overview_business_rules %}
+{% if business_rules %}
+## Business Rules
+
+{% for rule in business_rules %}
+- [{{ rule.id }} - {{ rule.name }}](business_rules/{{ rule.id }}.md)
+{% endfor %}
+{% endif %}
+{% endblock %}

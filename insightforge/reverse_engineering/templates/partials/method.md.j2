@@ -1,0 +1,11 @@
+{# Template fragment for method documentation #}
+### `{{ method.name }}({% for param in method.parameters %}{{ param }}{% if not loop.last %}, {% endif %}{% endfor %})`
+
+{% if method.docstring %}
+{{ method.docstring }}
+{% endif %}
+
+- **Line**: {{ method.line_number }}
+{% if method.return_type %}
+- **Returns**: {{ method.return_type }}
+{% endif %}

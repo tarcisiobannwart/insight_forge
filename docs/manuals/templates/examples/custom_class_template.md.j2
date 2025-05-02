@@ -1,0 +1,77 @@
+{# 
+   Example of a custom class template with enhanced formatting
+   This demonstrates how to customize the class documentation template
+#}
+
+{% extends "class.md.j2" %}
+
+{% block class_header %}
+# Classe: {{ class.name }}
+
+![Badge](https://img.shields.io/badge/Documentation-InsightForge-blue)
+{% endblock %}
+
+{% block class_description %}
+{% if class.docstring %}
+## Descrição
+
+{{ class.docstring }}
+
+---
+{% endif %}
+{% endblock %}
+
+{% block class_inheritance %}
+{% if class.base_classes %}
+## Hierarquia
+
+```mermaid
+classDiagram
+    {% for base in class.base_classes %}
+    {{ base }} <|-- {{ class.name }}
+    {% endfor %}
+```
+{% endif %}
+{% endblock %}
+
+{% block class_methods %}
+{% if class.methods %}
+## Métodos da Classe
+
+| Nome | Parâmetros | Descrição | Linha |
+|------|------------|-----------|-------|
+{% for method in class.methods %}
+| `{{ method.name }}` | {% if method.parameters %}{{ method.parameters|join(", ") }}{% else %}-{% endif %} | {% if method.docstring %}{{ method.docstring|replace("\n", " ")|truncate(50) }}{% else %}-{% endif %} | {{ method.line_number }} |
+{% endfor %}
+
+### Detalhes dos Métodos
+
+{% for method in class.methods %}
+#### `{{ method.name }}`
+
+{% if method.docstring %}
+{{ method.docstring }}
+{% endif %}
+
+{% if method.parameters %}
+**Parâmetros**:
+{% for param in method.parameters %}
+- `{{ param }}`{% if method.parameter_types and method.parameter_types[param] %}: {{ method.parameter_types[param] }}{% endif %}{% if method.parameter_docs and method.parameter_docs[param] %} - {{ method.parameter_docs[param] }}{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if method.return_type %}
+**Retorna**: {{ method.return_type }}
+{% endif %}
+
+{% if not loop.last %}
+---
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block class_footer %}
+---
+*Documentação gerada por InsightForge*
+{% endblock %}

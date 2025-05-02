@@ -1,0 +1,42 @@
+{# Template for generating user story documentation #}
+{% block story_header %}
+# User Story: {{ story.id }} - {{ story.name }}
+{% endblock %}
+
+{% block story_narrative %}
+## Narrative
+
+As a {{ story.role }},
+I want {{ story.goal }},
+So that {{ story.benefit }}
+{% endblock %}
+
+{% block story_acceptance %}
+{% if story.acceptance_criteria %}
+## Acceptance Criteria
+
+{% for criteria in story.acceptance_criteria %}
+- {{ criteria }}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block story_related %}
+{% if story.related_usecases %}
+## Related Use Cases
+
+{% for uc in story.related_usecases %}
+- [{{ uc.id }} - {{ uc.name }}](../usecases/{{ uc.id }}.md)
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block story_implementation %}
+{% if story.implemented_by %}
+## Implementation
+
+{% for component in story.implemented_by %}
+- [{{ component.name }}]({{ component.link }})
+{% endfor %}
+{% endif %}
+{% endblock %}

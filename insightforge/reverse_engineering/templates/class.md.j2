@@ -1,0 +1,54 @@
+{# Template for generating class documentation #}
+{% block class_header %}
+# Class: {{ class.name }}
+{% endblock %}
+
+{% block class_description %}
+{% if class.docstring %}
+## Description
+
+{{ class.docstring }}
+{% endif %}
+{% endblock %}
+
+{% block class_source %}
+## Source
+
+- **File**: `{{ class.file_path }}`
+- **Line**: {{ class.line_number }}
+{% endblock %}
+
+{% block class_inheritance %}
+{% if class.base_classes %}
+## Inheritance
+
+{% for base in class.base_classes %}
+- {{ base }}{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block class_methods %}
+{% if class.methods %}
+## Methods
+
+{% for method in class.methods %}
+{% include "partials/method.md.j2" %}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block class_attributes %}
+{% if class.attributes %}
+## Attributes
+
+{% for attr in class.attributes %}
+- **{{ attr.name }}**: {% if attr.type %}{{ attr.type }}{% else %}Any{% endif %}{% if attr.docstring %} - {{ attr.docstring }}{% endif %}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block class_footer %}
+{% if class.code_component %}
+{% include "partials/component_links.md.j2" %}
+{% endif %}
+{% endblock %}

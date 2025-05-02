@@ -1,0 +1,8 @@
+{# Template fragment for component links #}
+## Related Components
+
+{% if related_components %}
+{% for component in related_components %}
+- [{{ component.name }}]({{ component.link }})
+{% endfor %}
+{% endif %}

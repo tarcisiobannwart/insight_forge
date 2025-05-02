@@ -1,0 +1,38 @@
+{# Template for generating business rule documentation #}
+{% block rule_header %}
+# Business Rule: {{ rule.id }} - {{ rule.name }}
+{% endblock %}
+
+{% block rule_description %}
+## Description
+
+{{ rule.description }}
+{% endblock %}
+
+{% block rule_metadata %}
+## Metadata
+
+- **Type**: {{ rule.type }}
+- **Severity**: {{ rule.severity }}
+- **Source**: {{ rule.source }}
+{% if rule.code_component %}
+- **Component**: {{ rule.code_component }}
+{% endif %}
+{% endblock %}
+
+{% block rule_implementation %}
+## Implementation
+
+- **File**: `{{ rule.file_path }}`
+- **Line**: {{ rule.line_number }}
+{% endblock %}
+
+{% block rule_related %}
+{% if rule.related_rules %}
+## Related Rules
+
+{% for related_id in rule.related_rules %}
+- {{ related_id }}
+{% endfor %}
+{% endif %}
+{% endblock %}

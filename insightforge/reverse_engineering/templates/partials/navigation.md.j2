@@ -1,0 +1,7 @@
+{# Template fragment for navigation #}
+## Navigation
+
+- [Back to Overview](../overview.md)
+{% if parent_component %}
+- [Up to {{ parent_component.name }}]({{ parent_component.link }})
+{% endif %}

@@ -1,0 +1,72 @@
+{# Template for generating use case documentation #}
+{% block usecase_header %}
+# Use Case: {{ usecase.id }} - {{ usecase.name }}
+{% endblock %}
+
+{% block usecase_description %}
+## Description
+
+{{ usecase.description }}
+{% endblock %}
+
+{% block usecase_actors %}
+{% if usecase.actors %}
+## Actors
+
+{% for actor in usecase.actors %}
+- {{ actor }}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block usecase_preconditions %}
+{% if usecase.preconditions %}
+## Preconditions
+
+{% for precondition in usecase.preconditions %}
+- {{ precondition }}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block usecase_flow %}
+## Main Flow
+
+{% for step in usecase.main_flow %}
+{{ loop.index }}. {{ step }}
+{% endfor %}
+{% endblock %}
+
+{% block usecase_alternate %}
+{% if usecase.alternate_flows %}
+## Alternate Flows
+
+{% for flow in usecase.alternate_flows %}
+### {{ flow.name }}
+
+{% for step in flow.steps %}
+{{ loop.index }}. {{ step }}
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block usecase_postconditions %}
+{% if usecase.postconditions %}
+## Postconditions
+
+{% for postcondition in usecase.postconditions %}
+- {{ postcondition }}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block usecase_related %}
+{% if usecase.related_usecases %}
+## Related Use Cases
+
+{% for uc in usecase.related_usecases %}
+- [{{ uc.id }} - {{ uc.name }}]({{ uc.id }}.md)
+{% endfor %}
+{% endif %}
+{% endblock %}
