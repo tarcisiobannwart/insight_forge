@@ -8,19 +8,18 @@
     "backlog_generation": true,
     "llm_ingestion": false
   },
-  "generated_at": "2025-05-02T16:00:00Z",
+  "generated_at": "2025-05-02T17:00:00Z",
   "components": {
     "code_parser": {
       "implemented": true,
-      "completion": 40,
+      "completion": 60,
       "pending_features": [
-        "Detecção de herança",
-        "Análise de imports",
-        "Detecção de atributos",
+        "Análise de imports (parcialmente implementado)",
+        "Detecção de atributos (implementado)",
         "Suporte multi-linguagem"
       ],
       "planned_tasks": [
-        "TASK-CP-01: Aprimorar PythonAstParser",
+        "TASK-CP-01: Aprimorar PythonAstParser (parcialmente concluído)",
         "TASK-CP-02: Implementar tratamento de erros robusto"
       ]
     },
@@ -88,14 +87,13 @@
     },
     "infrastructure": {
       "implemented": true,
-      "completion": 20,
+      "completion": 30,
       "pending_features": [
-        "Testes unitários",
         "Sistema de configuração",
         "CLI avançada"
       ],
       "planned_tasks": [
-        "TASK-INF-01: Implementar testes unitários",
+        "TASK-INF-01: Implementar testes unitários (parcialmente concluído)",
         "TASK-INF-02: Implementar sistema de configuração"
       ]
     }
@@ -154,17 +152,16 @@
     }
   ],
   "priorities": [
-    "Detecção de herança entre classes",
     "Extração de regras de negócio",
     "Sistema de templates para documentação",
-    "Implementação de testes unitários",
+    "Finalizar testes unitários",
     "Geração de diagramas Mermaid"
   ],
   "stats": {
     "total_tasks": 20,
     "completed_tasks": 0,
-    "in_progress_tasks": 0,
-    "planned_tasks": 20,
+    "in_progress_tasks": 2,
+    "planned_tasks": 18,
     "estimated_days": 67
   }
 }
