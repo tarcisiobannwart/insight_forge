@@ -116,6 +116,18 @@ Tabela de rastreabilidade UC ↔ BR ↔ US ↔ código:
 
 ---
 
+## 📝 Status das Issues
+
+| Issue ID | Descrição                             | Status    | Implementado em                       |
+|----------|---------------------------------------|-----------|--------------------------------------|
+| ISSUE-001 | Detecção de herança de classes       | ✅ Completo | `code_parser.py`, `diagram_generator.py` |
+| ISSUE-002 | Extrator de regras de negócio        | ✅ Completo | `business_rules.py`                  |
+| ISSUE-003 | Diagramas Mermaid                    | ✅ Completo | `diagram_generator.py`              |
+| ISSUE-004 | Testes unitários                     | ✅ Completo | `/tests/` (vários arquivos)         |
+| ISSUE-005 | Suporte a PHP                        | ✅ Completo | `php_parser.py`, templates específicos |
+
+---
+
 ## ✅ Arquivos MCP Planejados
 
 - `mcp.py` – Executa todos os módulos em ordem lógica
