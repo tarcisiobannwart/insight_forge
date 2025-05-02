@@ -1,0 +1,42 @@
+{# Template for generating module index documentation #}
+{% block index_header %}
+# Modules
+{% endblock %}
+
+{% block index_summary %}
+{% if modules %}
+This project contains {{ modules|length }} {% if modules|length == 1 %}module{% else %}modules{% endif %}.
+{% else %}
+No modules were found in this project.
+{% endif %}
+{% endblock %}
+
+{% block index_diagrams %}
+{% if module_diagrams %}
+## Module Diagrams
+
+{% for diagram in module_diagrams %}
+- [{{ diagram.name }}]({{ diagram.path }})
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block index_modules %}
+{% if modules %}
+## Module List
+
+{% for module in modules %}
+- {{ module.name }}{% if module.description %} - {{ module.description }}{% endif %}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block index_dependencies %}
+{% if dependencies %}
+## Module Dependencies
+
+{% for dep in dependencies %}
+- {{ dep.source }} → {{ dep.target }}{% if dep.type %} ({{ dep.type }}){% endif %}
+{% endfor %}
+{% endif %}
+{% endblock %}

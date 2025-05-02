@@ -1,0 +1,24 @@
+theme: jekyll-theme-minimal
+title: InsightForge
+description: Ferramenta para análise e documentação automática de código com diagramas e integração com LLMs
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Navigation structure
+nav:
+  - title: Home
+    url: /
+  - title: Arquitetura
+    url: /architecture
+  - title: Diagramas
+    url: /diagrams/
+  - title: API de Referência
+    url: /api/
+  - title: Como Contribuir
+    url: /contributing
+
+# Additional settings
+plugins:
+  - jekyll-seo-tag

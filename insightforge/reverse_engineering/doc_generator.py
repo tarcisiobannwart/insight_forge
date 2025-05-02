@@ -67,6 +67,10 @@ class DocGenerator:
         # Generate business rules documentation
         if 'business_rules' in parsed_data:
             self._generate_business_rule_docs(parsed_data['business_rules'])
+            
+        # Generate module documentation if available
+        if 'modules' in parsed_data:
+            self._generate_module_index(parsed_data['modules'])
     
     def _generate_overview(self, parsed_data: Dict[str, Any]) -> None:
         """
@@ -76,7 +80,9 @@ class DocGenerator:
             parsed_data: Dictionary containing parsed code data
         """
         try:
-            self.template_manager.render_overview(parsed_data)
+            # Pass the diagram index to include diagrams in overview
+            diagram_index = self.diagram_index if self.generate_diagrams else None
+            self.template_manager.render_overview(parsed_data, diagram_index)
             self.logger.info("Generated overview document")
         except Exception as e:
             self.logger.error(f"Error generating overview: {str(e)}")
@@ -146,9 +152,62 @@ class DocGenerator:
         functions_dir = os.path.join(self.output_dir, "functions")
         os.makedirs(functions_dir, exist_ok=True)
         
+        # If diagrams are enabled, find diagrams for each function
+        function_diagrams = {}
+        function_flows = {}
+        
+        if self.generate_diagrams:
+            # Build a map of function name to sequence diagrams it appears in
+            for diagram in self.diagram_index.sequence_diagrams:
+                flow_name = diagram.get('flow', '')
+                flow_path = diagram.get('path', '')
+                
+                # Look for functions in flows
+                if 'flows' in self.diagram_generator.parsed_data:
+                    flows = self.diagram_generator.parsed_data.get('flows', {})
+                    flow = flows.get(flow_name, {})
+                    
+                    # Extract participants and methods from steps
+                    for step in flow.get('steps', []):
+                        # Extract method names from messages
+                        message = step.get('message', '')
+                        method_match = re.search(r'([a-zA-Z_][a-zA-Z0-9_]*)(?:\(|\.)', message)
+                        
+                        if method_match:
+                            method_name = method_match.group(1)
+                            
+                            # Add to function flows
+                            if method_name not in function_flows:
+                                function_flows[method_name] = []
+                            
+                            if {'name': flow_name, 'path': f"../{flow_path}"} not in function_flows[method_name]:
+                                function_flows[method_name].append({
+                                    'name': flow_name,
+                                    'path': f"../{flow_path}"
+                                })
+                            
+                            # Add to function diagrams
+                            if method_name not in function_diagrams:
+                                function_diagrams[method_name] = []
+                            
+                            if {'name': diagram['name'], 'path': f"../{flow_path}"} not in function_diagrams[method_name]:
+                                function_diagrams[method_name].append({
+                                    'name': diagram['name'],
+                                    'path': f"../{flow_path}"
+                                })
+        
         for func in functions:
             try:
-                self.template_manager.render_function(func)
+                # Add diagrams and flows to function context if available
+                function_context = func.copy()
+                
+                if func['name'] in function_diagrams:
+                    function_context['diagrams'] = function_diagrams[func['name']]
+                
+                if func['name'] in function_flows:
+                    function_context['flows'] = function_flows[func['name']]
+                
+                self.template_manager.render_function(function_context)
                 self.logger.debug(f"Generated documentation for function {func['name']}")
             except Exception as e:
                 self.logger.error(f"Error generating docs for function {func.get('name', 'unknown')}: {str(e)}")
@@ -181,6 +240,9 @@ class DocGenerator:
         # Create diagrams directory
         diagrams_dir = os.path.join(self.output_dir, "diagrams")
         os.makedirs(diagrams_dir, exist_ok=True)
+        
+        # Store parsed data in diagram generator for reference
+        self.diagram_generator.parsed_data = parsed_data
         
         # Generate class diagram
         if 'classes' in parsed_data and parsed_data['classes']:
@@ -454,6 +516,49 @@ class DocGenerator:
                 self.logger.debug(f"Generated sequence diagram for {flow_name}")
             except Exception as e:
                 self.logger.error(f"Error generating sequence diagram for {flow_name}: {str(e)}")
+    
+    def _generate_module_index(self, modules: List[Dict[str, Any]]) -> None:
+        """
+        Generate module index documentation.
+        
+        Args:
+            modules: List of module data dictionaries
+        """
+        # Create modules directory
+        modules_dir = os.path.join(self.output_dir, "modules")
+        os.makedirs(modules_dir, exist_ok=True)
+        
+        # Prepare context for the module index
+        context = {
+            "modules": modules,
+            "dependencies": []
+        }
+        
+        # Add module diagrams if available
+        if self.generate_diagrams:
+            context["module_diagrams"] = [
+                {"name": diag["name"], "path": f"../diagrams/{os.path.basename(diag['path'])}"}
+                for diag in self.diagram_index.module_diagrams
+            ]
+            
+            # Extract dependencies from parsed data if available
+            if 'dependencies' in self.diagram_generator.parsed_data:
+                context["dependencies"] = self.diagram_generator.parsed_data.get('dependencies', [])
+        
+        # Generate module index
+        try:
+            # Check if module_index.md.j2 template exists
+            if self.template_manager.loader.template_exists("module_index.md.j2"):
+                content = self.template_manager.loader.render_template("module_index.md.j2", context)
+                
+                with open(os.path.join(modules_dir, "index.md"), 'w', encoding='utf-8') as f:
+                    f.write(content)
+                
+                self.logger.info("Generated module index document")
+            else:
+                self.logger.warning("Module index template not found, skipping module index generation")
+        except Exception as e:
+            self.logger.error(f"Error generating module index: {str(e)}")
     
     def customize_template(self, template_name: str, custom_template_content: str) -> bool:
         """

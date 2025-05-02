@@ -11,6 +11,44 @@
 {% if business_rules %}
 - **Business Rules**: {{ business_rules|length }}
 {% endif %}
+{% if class_diagrams %}
+- **Class Diagrams**: {{ class_diagrams|length }}
+{% endif %}
+{% if module_diagrams %}
+- **Module Diagrams**: {{ module_diagrams|length }}
+{% endif %}
+{% if sequence_diagrams %}
+- **Sequence Diagrams**: {{ sequence_diagrams|length }}
+{% endif %}
+{% endblock %}
+
+{% block overview_diagrams %}
+{% if has_diagrams %}
+## Diagrams
+
+{% if class_diagrams %}
+### Class Diagrams
+{% for diagram in class_diagrams %}
+- [{{ diagram.name }}]({{ diagram.path }})
+{% endfor %}
+{% endif %}
+
+{% if module_diagrams %}
+### Module Diagrams
+{% for diagram in module_diagrams %}
+- [{{ diagram.name }}]({{ diagram.path }})
+{% endfor %}
+{% endif %}
+
+{% if sequence_diagrams %}
+### Sequence Diagrams
+{% for diagram in sequence_diagrams %}
+- [{{ diagram.name }}]({{ diagram.path }})
+{% endfor %}
+{% endif %}
+
+[View all diagrams](diagrams/index.md)
+{% endif %}
 {% endblock %}
 
 {% block overview_classes %}

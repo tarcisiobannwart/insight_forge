@@ -1,76 +1,92 @@
 # InsightForge
 
+\![License](https://img.shields.io/badge/license-MIT-blue)
+\![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10-blue)
+
+**InsightForge** é uma ferramenta avançada para análise e documentação automática de código, com geração de diagramas, detecção de relacionamentos e integração com LLMs.
+
 ## Visão Geral
 
-InsightForge é uma ferramenta de engenharia reversa automatizada que transforma código-fonte em documentação técnica estruturada, criando casos de uso, user stories e alimentando modelos de linguagem com o conhecimento extraído.
+A ferramenta analisa o código-fonte em várias linguagens (Python, PHP, JavaScript/TypeScript) e gera documentação estruturada com diagramas das classes, módulos e fluxos de interação. Usando LLMs, o InsightForge também pode gerar explicações de código e responder a consultas em linguagem natural.
 
-## 🚀 Recursos
+## Recursos Principais
 
-- **Análise de Código**: Extração automática de classes, métodos, funções e suas relações
-- **Documentação Markdown**: Geração de documentação técnica estruturada e navegável
-- **Extração de Casos de Uso**: Identificação de funcionalidades a partir de comentários e código
-- **Geração de Backlog**: Criação de user stories e épicos para planejamento ágil
-- **Integração com LLM**: Alimentação de modelos como Ollama e Claude com o conhecimento do projeto
+- **Análise Multi-linguagem**: Suporte para Python, PHP, JavaScript e TypeScript
+- **Diagramas Automáticos**: Geração de diagramas de classe, módulo e sequência usando sintaxe Mermaid
+- **Detecção de Relacionamentos**: Identificação automática de herança, composição, agregação e associações
+- **Análise de Fluxo**: Rastreamento de chamadas de método para reconstruir fluxos de execução
+- **Integração com LLMs**: Explicações de código e consultas em linguagem natural via integração com Ollama
+- **Exportação Flexível**: Exportação para diferentes formatos, incluindo GitHub Pages
 
-## 🛠️ Tecnologias
-
-- Python 3.10+
-- AST (Abstract Syntax Tree) para análise de código
-- Markdown para geração de documentação
-- Integração com modelos de linguagem local
-
-## 📋 Requisitos
-
-- Python 3.10 ou superior
-- Dependências listadas em `requirements.txt`
-
-## 🔧 Instalação
-
-1. Clone o repositório:
-```bash
-git clone https://github.com/seu-usuario/insight_forge.git
-cd insight_forge
-```
-
-2. Instale as dependências:
-```bash
-pip install -r insightforge/requirements.txt
-```
-
-## 📊 Uso
-
-Análise básica de um projeto:
+## Instalação
 
 ```bash
-python main.py --project /caminho/do/seu/projeto
+# Via pip
+pip install insightforge
+
+# Ou diretamente do GitHub
+pip install git+https://github.com/seu-usuario/insight_forge.git
 ```
 
-## 📁 Estrutura do Projeto
+## Uso Rápido
 
-```
-insightforge/
-├── main.py                 # Ponto de entrada CLI
-├── reverse_engineering/    # Módulos de análise e geração
-│   ├── code_parser.py      # Analisador de código
-│   ├── doc_generator.py    # Gerador de documentação
-│   ├── usecase_extractor.py # Extrator de casos de uso
-│   └── backlog_builder.py  # Construtor de backlog
-├── ingestion/              # Módulos de ingestão de docs existentes
-├── ollama/                 # Integração com modelos de linguagem
-└── docs/                   # Templates e documentação interna
+```bash
+# Analisar um projeto e gerar documentação
+insightforge analyze --project ./meu-projeto --output-dir ./documentacao
+
+# Exportar documentação para GitHub Pages
+insightforge github-export --docs-dir ./documentacao --project-name "Meu Projeto"
+
+# Publicar documentação no GitHub Pages
+insightforge github-publish --docs-dir ./documentacao --repo-url https://github.com/usuario/repo --project-name "Meu Projeto" --setup-actions
 ```
 
-## 📝 Status do Projeto
+## Documentação
 
-Este projeto está em desenvolvimento ativo. Consulte o arquivo `docs/internal/mcp_status.json` para status detalhado.
+Para documentação completa, acesse: [https://seu-usuario.github.io/insight_forge/](https://seu-usuario.github.io/insight_forge/)
 
-## 🔮 Próximos Passos
+## Exemplos
 
-- Suporte para mais linguagens além de Python
-- Integração com sistemas de gerenciamento de projetos
-- UI para visualização e navegação da documentação
-- Análise incremental baseada em git diff
+### Diagrama de Classe
 
-## 📄 Licença
+```mermaid
+classDiagram
+    class CodeParser {
+        +project_path: str
+        +parse() Dict
+    }
+    
+    class DiagramGenerator {
+        +generate_class_diagram(parsed_data) str
+        +generate_module_diagram(parsed_data) str
+    }
+    
+    CodeParser --> DiagramGenerator: uses
+```
 
-[MIT](LICENSE)
+### Diagrama de Sequência
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Parser as CodeParser
+    participant DiagramGen as DiagramGenerator
+    
+    User->>Parser: parse()
+    Parser-->>User: parsed_data
+    User->>DiagramGen: generate_diagrams(parsed_data)
+    DiagramGen-->>User: diagrams
+```
+
+## Licença
+
+Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## Contribuindo
+
+Contribuições são bem-vindas\! Veja [docs/contributing.md](docs/contributing.md) para detalhes sobre como contribuir para este projeto.
+
+## Créditos
+
+Desenvolvido por Tarcisio Bannwart
+EOF < /dev/null

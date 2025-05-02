@@ -11,6 +11,16 @@
 {% endif %}
 {% endblock %}
 
+{% block function_diagrams %}
+{% if diagrams %}
+## Diagrams
+
+{% for diagram in diagrams %}
+- [{{ diagram.name }}]({{ diagram.path }})
+{% endfor %}
+{% endif %}
+{% endblock %}
+
 {% block function_source %}
 ## Source
 
@@ -33,6 +43,17 @@
 ## Returns
 
 {{ function.return_type }}
+{% endif %}
+{% endblock %}
+
+{% block function_sequence_flows %}
+{% if function.flows %}
+## Sequence Flows
+
+This function is part of the following flows:
+{% for flow in function.flows %}
+- [{{ flow.name }}](../diagrams/sequence_{{ flow.name|lower|replace(' ', '_') }}.md)
+{% endfor %}
 {% endif %}
 {% endblock %}
 

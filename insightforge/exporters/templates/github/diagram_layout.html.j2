@@ -1,0 +1,46 @@
+---
+layout: default
+title: {{ diagram.name }}
+---
+
+<h1>{{ diagram.name }}</h1>
+
+{% if diagram.description %}
+<p>{{ diagram.description }}</p>
+{% endif %}
+
+<div class="diagram-container">
+{{ diagram.content|safe }}
+</div>
+
+{% if diagram.classes %}
+<h2>Classes in this diagram</h2>
+<ul>
+{% for class in diagram.classes %}
+  <li><a href="{{ class.url }}">{{ class.name }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if diagram.modules %}
+<h2>Modules in this diagram</h2>
+<ul>
+{% for module in diagram.modules %}
+  <li>{{ module.name }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if diagram.components %}
+<h2>Components in this diagram</h2>
+<ul>
+{% for component in diagram.components %}
+  <li>{{ component }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if diagram.notes %}
+<h2>Notes</h2>
+<p>{{ diagram.notes }}</p>
+{% endif %}

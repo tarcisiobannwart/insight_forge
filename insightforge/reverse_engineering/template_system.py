@@ -325,8 +325,13 @@ class TemplateManager:
         # Try to load the template, fallback to default if not found
         if not self.loader.template_exists(template_name):
             template_name = "function.md.j2"
-            
-        context = {"function": function_data}
+        
+        # Prepare context with all the data
+        context = {
+            "function": function_data,
+            "diagrams": function_data.get('diagrams', []),
+            "flows": function_data.get('flows', [])
+        }
         
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
@@ -379,17 +384,22 @@ class TemplateManager:
             self.logger.error(f"Error rendering business rule template: {str(e)}")
             raise
     
-    def render_overview(self, parsed_data: Dict[str, Any]) -> str:
+    def render_overview(self, parsed_data: Dict[str, Any], diagram_index=None) -> str:
         """
         Render project overview documentation.
         
         Args:
             parsed_data: All parsed project data
+            diagram_index: Optional DiagramIndex object containing diagram information
             
         Returns:
             Path to generated file
         """
         template_name = "overview.md.j2"
+        
+        # Check if diagrams directory exists
+        diagrams_dir = os.path.join(self.output_dir, "diagrams")
+        has_diagrams = os.path.exists(diagrams_dir)
         
         # Prepare context with expected attributes
         context = {
@@ -397,8 +407,27 @@ class TemplateManager:
             "functions": parsed_data.get("functions", []),
             "business_rules": parsed_data.get("business_rules", []),
             "usecases": parsed_data.get("usecases", []),
-            "userstories": parsed_data.get("userstories", [])
+            "userstories": parsed_data.get("userstories", []),
+            "has_diagrams": has_diagrams
         }
+        
+        # Add diagrams if available
+        if diagram_index:
+            # Add diagrams with relative paths
+            context["class_diagrams"] = [
+                {"name": diag["name"], "path": diag["path"]} 
+                for diag in diagram_index.class_diagrams
+            ]
+            
+            context["module_diagrams"] = [
+                {"name": diag["name"], "path": diag["path"]} 
+                for diag in diagram_index.module_diagrams
+            ]
+            
+            context["sequence_diagrams"] = [
+                {"name": diag["name"], "path": diag["path"]} 
+                for diag in diagram_index.sequence_diagrams
+            ]
         
         output_path = os.path.join(self.output_dir, "overview.md")
         
@@ -432,10 +461,12 @@ class TemplateManager:
             "project_description": project_description,
             "classes": parsed_data.get("classes", []),
             "functions": parsed_data.get("functions", []),
+            "modules": parsed_data.get("modules", []),
             "business_rules": parsed_data.get("business_rules", []),
             "usecases": parsed_data.get("usecases", []),
             "userstories": parsed_data.get("userstories", []),
-            "has_diagrams": os.path.exists(os.path.join(self.output_dir, "diagrams"))
+            "has_diagrams": os.path.exists(os.path.join(self.output_dir, "diagrams")),
+            "has_modules": os.path.exists(os.path.join(self.output_dir, "modules"))
         }
         
         output_path = os.path.join(self.output_dir, "index.md")
