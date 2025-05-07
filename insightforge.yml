@@ -1,0 +1,47 @@
+project:
+  name: InsightForge
+  description: "Code analysis and documentation generation tool"
+  version: "1.0.0"
+  paths:
+    source_code: "."
+    documentation: "docs"
+    guides: "docs/manuals"
+    diagrams: "docs/diagrams"
+    issues: "docs/issues"
+
+llm_providers:
+  - name: ollama_local
+    type: ollama
+    default: true
+    models:
+      - id: mistral
+        display_name: "Mistral 7B Instruct"
+        endpoint: "http://localhost:11434"
+        default_for:
+          - code_analysis
+          - documentation
+          - query
+          - chat
+          - embedding
+        parameters:
+          temperature: 0.7
+          max_tokens: 2000
+
+integrations:
+  github:
+    enabled: false
+    settings:
+      repository: ""
+      branch: "main"
+    credentials: {}
+  
+  jira:
+    enabled: false
+    settings:
+      url: ""
+      project_key: ""
+      sync_settings:
+        auto_create: false
+        auto_update: false
+        sync_interval: 0
+    credentials: {}
