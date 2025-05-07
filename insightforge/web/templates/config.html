@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}InsightForge - Configuration Overview{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2><i class="fas fa-cogs me-2"></i> Configuration Overview</h2>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Configuration file: <code>{{ config_file }}</code>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fab fa-jira me-2"></i> Jira Integration</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if 'jira' in integrations %}
+                            {% if integrations.jira.enabled %}
+                                <div class="text-success mb-2">
+                                    <i class="fas fa-check-circle me-1"></i> Configured
+                                </div>
+                                <div><strong>URL:</strong> {{ integrations.jira.settings.url }}</div>
+                                <div><strong>Project:</strong> {{ integrations.jira.settings.project_key }}</div>
+                            {% else %}
+                                <div class="text-warning mb-2">
+                                    <i class="fas fa-exclamation-circle me-1"></i> Credentials Missing
+                                </div>
+                                <p>Integration configured but credentials are missing.</p>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-secondary">
+                                <i class="fas fa-times-circle me-1"></i> Not Configured
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ url_for('config_jira') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i> Configure
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fab fa-github me-2"></i> GitHub Integration</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if 'github' in integrations %}
+                            {% if integrations.github.enabled %}
+                                <div class="text-success mb-2">
+                                    <i class="fas fa-check-circle me-1"></i> Configured
+                                </div>
+                                <div><strong>Repository:</strong> {{ integrations.github.settings.repository }}</div>
+                                <div><strong>Branch:</strong> {{ integrations.github.settings.branch }}</div>
+                            {% else %}
+                                <div class="text-warning mb-2">
+                                    <i class="fas fa-exclamation-circle me-1"></i> Token Missing
+                                </div>
+                                <p>Integration configured but token is missing.</p>
+                            {% endif %}
+                        {% else %}
+                            <div class="text-secondary">
+                                <i class="fas fa-times-circle me-1"></i> Not Configured
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ url_for('config_github') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i> Configure
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-brain me-2"></i> LLM Providers</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if providers %}
+                            <div class="text-success mb-2">
+                                <i class="fas fa-check-circle me-1"></i> Configured
+                            </div>
+                            <ul class="list-unstyled">
+                                {% for provider in providers %}
+                                    <li>
+                                        <strong>{{ provider.name }}</strong>
+                                        {% if provider.default %}
+                                            <span class="badge bg-primary">Default</span>
+                                        {% endif %}
+                                        <div class="small text-muted">
+                                            {{ provider.models|length }} model(s)
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <div class="text-secondary">
+                                <i class="fas fa-times-circle me-1"></i> Not Configured
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ url_for('config_llm') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i> Configure
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-folder me-2"></i> Project Paths</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if project_paths %}
+                            <div class="text-success mb-2">
+                                <i class="fas fa-check-circle me-1"></i> Configured
+                            </div>
+                            <div><strong>Source:</strong> {{ project_paths.source_code }}</div>
+                            <div><strong>Docs:</strong> {{ project_paths.documentation }}</div>
+                        {% else %}
+                            <div class="text-secondary">
+                                <i class="fas fa-times-circle me-1"></i> Not Configured
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ url_for('config_project') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i> Configure
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-end">
+            <button id="saveConfig" class="btn btn-success me-2">
+                <i class="fas fa-save me-1"></i> Save Configuration
+            </button>
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                <i class="fas fa-home me-1"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const saveButton = document.getElementById('saveConfig');
+        
+        saveButton.addEventListener('click', () => {
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+            
+            fetch('/config/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Create an alert
+                    const alertContainer = document.querySelector('.alert-container');
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-success alert-dismissible fade show';
+                    alert.innerHTML = `
+                        <i class="fas fa-check-circle me-1"></i> ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    alertContainer.appendChild(alert);
+                    
+                    // Auto-dismiss after 5 seconds
+                    setTimeout(() => {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }, 5000);
+                } else {
+                    // Create an error alert
+                    const alertContainer = document.querySelector('.alert-container');
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-danger alert-dismissible fade show';
+                    alert.innerHTML = `
+                        <i class="fas fa-exclamation-circle me-1"></i> ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    alertContainer.appendChild(alert);
+                }
+            })
+            .catch(error => {
+                // Create an error alert for network error
+                const alertContainer = document.querySelector('.alert-container');
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-danger alert-dismissible fade show';
+                alert.innerHTML = `
+                    <i class="fas fa-exclamation-circle me-1"></i> An error occurred: ${error.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                alertContainer.appendChild(alert);
+            })
+            .finally(() => {
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="fas fa-save me-1"></i> Save Configuration';
+            });
+        });
+    });
+</script>
+{% endblock %}

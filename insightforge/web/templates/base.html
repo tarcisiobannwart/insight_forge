@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}InsightForge Configuration{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body {
+            padding-top: 70px;
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            padding: 20px;
+            background-color: #343a40;
+            color: #fff;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #007bff;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: rgba(0, 0, 0, 0.03);
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                top: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        .alert-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1050;
+            width: 350px;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <i class="fas fa-brain me-2"></i>
+                InsightForge
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'config' in request.endpoint %}active{% endif %}" href="{{ url_for('config_overview') }}">
+                            <i class="fas fa-cogs me-1"></i> Configuration
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% if 'config' in request.endpoint %}
+    <!-- Sidebar -->
+    <div class="sidebar d-none d-md-block">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'config_overview' %}active{% endif %}" href="{{ url_for('config_overview') }}">
+                    <i class="fas fa-tachometer-alt me-2"></i> Overview
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'config_jira' %}active{% endif %}" href="{{ url_for('config_jira') }}">
+                    <i class="fab fa-jira me-2"></i> Jira Integration
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'config_github' %}active{% endif %}" href="{{ url_for('config_github') }}">
+                    <i class="fab fa-github me-2"></i> GitHub Integration
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'config_llm' %}active{% endif %}" href="{{ url_for('config_llm') }}">
+                    <i class="fas fa-brain me-2"></i> LLM Configuration
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'config_project' %}active{% endif %}" href="{{ url_for('config_project') }}">
+                    <i class="fas fa-project-diagram me-2"></i> Project Paths
+                </a>
+            </li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="{% if 'config' in request.endpoint %}main-content{% else %}container mt-4{% endif %}">
+        <!-- Flash Messages -->
+        <div class="alert-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% set alert_class = "alert-info" %}
+                        {% if category == "error" %}
+                            {% set alert_class = "alert-danger" %}
+                        {% elif category == "success" %}
+                            {% set alert_class = "alert-success" %}
+                        {% elif category == "warning" %}
+                            {% set alert_class = "alert-warning" %}
+                        {% endif %}
+                        <div class="alert {{ alert_class }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

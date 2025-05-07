@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}InsightForge - LLM Configuration{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2><i class="fas fa-brain me-2"></i> LLM Provider Configuration</h2>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Configure Large Language Model (LLM) providers and their models for code analysis and documentation generation.
+        </div>
+        
+        <!-- Provider List -->
+        {% if providers %}
+        <div class="mb-4">
+            <h3>Configured Providers</h3>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Type</th>
+                            <th>Models</th>
+                            <th>Default</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for provider in providers %}
+                        <tr>
+                            <td>{{ provider.name }}</td>
+                            <td>{{ provider.type }}</td>
+                            <td>
+                                {% for model in provider.models %}
+                                <span class="badge bg-secondary mb-1">{{ model.display_name or model.id }}</span>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if provider.default %}
+                                <span class="badge bg-success">Default</span>
+                                {% else %}
+                                <span class="badge bg-secondary">No</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary edit-provider" data-provider="{{ provider.name }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-provider" data-provider="{{ provider.name }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Add Provider Form -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Add LLM Provider</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('config_llm') }}">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="provider_type" class="form-label">Provider Type</label>
+                                <select id="provider_type" name="provider_type" class="form-select" required>
+                                    <option value="">Select provider type</option>
+                                    <option value="ollama">Ollama (Local)</option>
+                                    <option value="openai">OpenAI</option>
+                                    <option value="anthropic">Anthropic</option>
+                                    <option value="huggingface">Hugging Face</option>
+                                    <option value="azure">Azure OpenAI</option>
+                                </select>
+                                <div class="form-text">Select the LLM provider type</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="provider_name" class="form-label">Provider Name</label>
+                                <input type="text" id="provider_name" name="provider_name" class="form-control" required>
+                                <div class="form-text">A unique identifier for this provider</div>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="is_default" name="is_default">
+                                <label class="form-check-label" for="is_default">
+                                    Set as default provider
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="model_id" class="form-label">Model ID</label>
+                                <input type="text" id="model_id" name="model_id" class="form-control" required>
+                                <div class="form-text">Model identifier (e.g., mistral, gpt-4, claude-2)</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="model_name" class="form-label">Display Name</label>
+                                <input type="text" id="model_name" name="model_name" class="form-control">
+                                <div class="form-text">Human-friendly name for the model</div>
+                            </div>
+                            
+                            <div id="modelSearch" class="mb-3 d-none">
+                                <label class="form-label">Available Ollama Models</label>
+                                <div class="input-group">
+                                    <input type="text" id="endpoint" name="endpoint" class="form-control" placeholder="http://localhost:11434">
+                                    <button type="button" id="fetchModels" class="btn btn-secondary">
+                                        <i class="fas fa-search"></i> Fetch Models
+                                    </button>
+                                </div>
+                                <div class="form-text">Endpoint URL for Ollama</div>
+                                <div id="modelsList" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="api_key" class="form-label">API Key</label>
+                                <input type="password" id="api_key" name="api_key" class="form-control">
+                                <div class="form-text">API key for the provider (if required)</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="endpoint" class="form-label">Endpoint URL</label>
+                                <input type="text" id="endpoint" name="endpoint" class="form-control">
+                                <div class="form-text">The API endpoint URL (default values used if empty)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="temperature" class="form-label">Temperature (0.0-2.0)</label>
+                                <input type="range" id="temperature" name="temperature" class="form-range" min="0" max="2" step="0.1" value="0.7">
+                                <div class="d-flex justify-content-between">
+                                    <span>Precise</span>
+                                    <span id="temperatureValue">0.7</span>
+                                    <span>Creative</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="max_tokens" class="form-label">Max Tokens</label>
+                                <input type="number" id="max_tokens" name="max_tokens" class="form-control" value="1000">
+                                <div class="form-text">Maximum tokens to generate in completion</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Default For Tasks</label>
+                        <div class="form-text mb-2">Select which tasks this model should be used for by default</div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="default_for_code_analysis" name="default_for_code_analysis">
+                                    <label class="form-check-label" for="default_for_code_analysis">Code Analysis</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="default_for_documentation" name="default_for_documentation">
+                                    <label class="form-check-label" for="default_for_documentation">Documentation</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="default_for_query" name="default_for_query">
+                                    <label class="form-check-label" for="default_for_query">Query</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="default_for_chat" name="default_for_chat">
+                                    <label class="form-check-label" for="default_for_chat">Chat</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="default_for_embedding" name="default_for_embedding">
+                                    <label class="form-check-label" for="default_for_embedding">Embeddings</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus-circle me-1"></i> Add Provider
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Handle temperature slider
+        const temperatureSlider = document.getElementById('temperature');
+        const temperatureValue = document.getElementById('temperatureValue');
+        
+        temperatureSlider.addEventListener('input', () => {
+            temperatureValue.textContent = temperatureSlider.value;
+        });
+        
+        // Show model search for Ollama
+        const providerType = document.getElementById('provider_type');
+        const modelSearch = document.getElementById('modelSearch');
+        
+        providerType.addEventListener('change', () => {
+            if (providerType.value === 'ollama') {
+                modelSearch.classList.remove('d-none');
+            } else {
+                modelSearch.classList.add('d-none');
+            }
+        });
+        
+        // Fetch Ollama models
+        const fetchModelsButton = document.getElementById('fetchModels');
+        const modelsListDiv = document.getElementById('modelsList');
+        const endpointInput = document.getElementById('endpoint');
+        const modelIdInput = document.getElementById('model_id');
+        
+        fetchModelsButton.addEventListener('click', () => {
+            const endpoint = endpointInput.value || 'http://localhost:11434';
+            
+            // Show spinner
+            modelsListDiv.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm" role="status"></div> Loading models...</div>';
+            
+            // Fetch models
+            fetch(`/api/ollama_models?endpoint=${encodeURIComponent(endpoint)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        if (data.models.length > 0) {
+                            let html = '<div class="list-group">';
+                            data.models.forEach(model => {
+                                html += `
+                                <button type="button" class="list-group-item list-group-item-action model-select" data-model="${model}">
+                                    ${model}
+                                </button>`;
+                            });
+                            html += '</div>';
+                            modelsListDiv.innerHTML = html;
+                            
+                            // Add click handlers for model selection
+                            document.querySelectorAll('.model-select').forEach(button => {
+                                button.addEventListener('click', () => {
+                                    const model = button.getAttribute('data-model');
+                                    modelIdInput.value = model;
+                                    
+                                    // Remove active class from all buttons
+                                    document.querySelectorAll('.model-select').forEach(btn => {
+                                        btn.classList.remove('active');
+                                    });
+                                    
+                                    // Add active class to clicked button
+                                    button.classList.add('active');
+                                });
+                            });
+                        } else {
+                            modelsListDiv.innerHTML = '<div class="alert alert-warning">No models found. Please pull models in Ollama first.</div>';
+                        }
+                    } else {
+                        modelsListDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    modelsListDiv.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                });
+        });
+        
+        // Handle form submission validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', (event) => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    });
+</script>
+{% endblock %}

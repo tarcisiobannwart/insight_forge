@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}InsightForge - Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0"><i class="fas fa-brain me-2"></i> Welcome to InsightForge</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4">
+                            <i class="fas fa-cogs fa-4x text-primary mb-3"></i>
+                            <h3>Configuration</h3>
+                            <p>Configure tokens, paths, and integrations</p>
+                            <a href="{{ url_for('config_overview') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-wrench me-1"></i> Manage Configuration
+                            </a>
+                        </div>
+                        <div class="col-md-4 text-center mb-4">
+                            <i class="fab fa-jira fa-4x text-primary mb-3"></i>
+                            <h3>Jira Integration</h3>
+                            <p>Sync issues with Jira automatically</p>
+                            <a href="{{ url_for('config_jira') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-link me-1"></i> Configure Jira
+                            </a>
+                        </div>
+                        <div class="col-md-4 text-center mb-4">
+                            <i class="fas fa-brain fa-4x text-primary mb-3"></i>
+                            <h3>LLM Settings</h3>
+                            <p>Configure LLM providers and models</p>
+                            <a href="{{ url_for('config_llm') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-sliders-h me-1"></i> Configure LLMs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0"><i class="fas fa-info-circle me-2"></i> Quick Start Guide</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Follow these steps to get started with InsightForge:</p>
+                    
+                    <ol class="list-group list-group-numbered mb-4">
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Configure Project Paths</div>
+                                Set up source code, documentation, and output paths
+                            </div>
+                            <a href="{{ url_for('config_project') }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-folder me-1"></i> Configure
+                            </a>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Set Up LLM Integration</div>
+                                Configure Ollama or other LLM providers
+                            </div>
+                            <a href="{{ url_for('config_llm') }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-brain me-1"></i> Configure
+                            </a>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">Configure External Integrations</div>
+                                Connect to Jira, GitHub, and other services
+                            </div>
+                            <div>
+                                <a href="{{ url_for('config_jira') }}" class="btn btn-sm btn-primary me-1">
+                                    <i class="fab fa-jira me-1"></i> Jira
+                                </a>
+                                <a href="{{ url_for('config_github') }}" class="btn btn-sm btn-primary">
+                                    <i class="fab fa-github me-1"></i> GitHub
+                                </a>
+                            </div>
+                        </li>
+                    </ol>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Tip:</strong> You can use the command-line tool <code>simple_config.py</code> for quick configuration if you prefer.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

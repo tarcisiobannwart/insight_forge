@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}InsightForge - Jira Configuration{% endblock %}
+
+{% block extra_css %}
+<style>
+    .test-connection-alert {
+        display: none;
+        margin-top: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2><i class="fab fa-jira me-2"></i> Jira Integration</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" id="jiraForm">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="jira_url" class="form-label">Jira URL</label>
+                        <input type="url" class="form-control" id="jira_url" name="jira_url" placeholder="https://company.atlassian.net" value="{{ defaults.url }}" required>
+                        <div class="form-text">Your Jira instance URL (e.g., https://company.atlassian.net)</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="project_key" class="form-label">Project Key</label>
+                        <input type="text" class="form-control" id="project_key" name="project_key" placeholder="PROJ" value="{{ defaults.project_key }}">
+                        <div class="form-text">Your default Jira project key (e.g., PROJ)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Credentials</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Email/Username</label>
+                                <input type="email" class="form-control" id="username" name="username" placeholder="your.email@example.com" value="{{ defaults.username }}" required>
+                                <div class="form-text">Your Jira email address</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="api_token" class="form-label">API Token</label>
+                                <input type="password" class="form-control" id="api_token" name="api_token" placeholder="API Token">
+                                <div class="form-text">
+                                    Your Jira API token (leave empty to keep current)
+                                    <a href="https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/" target="_blank">
+                                        <i class="fas fa-question-circle"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-info" id="testConnection">
+                        <i class="fas fa-plug me-1"></i> Test Connection
+                    </button>
+                    
+                    <div class="alert test-connection-alert" role="alert"></div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Synchronization Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="auto_create" name="auto_create" {% if defaults.auto_create %}checked{% endif %}>
+                        <label class="form-check-label" for="auto_create">
+                            Automatically create Jira issues
+                        </label>
+                        <div class="form-text">Create issues in Jira automatically when they are added in InsightForge</div>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="auto_update" name="auto_update" {% if defaults.auto_update %}checked{% endif %}>
+                        <label class="form-check-label" for="auto_update">
+                            Automatically update Jira issues
+                        </label>
+                        <div class="form-text">Update issues in Jira when they are modified in InsightForge</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="sync_interval" class="form-label">Sync Interval (minutes)</label>
+                        <input type="number" class="form-control" id="sync_interval" name="sync_interval" value="{{ defaults.sync_interval }}" min="0">
+                        <div class="form-text">How often to sync with Jira (0 for manual sync only)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('config_overview') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> Save Configuration
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const testButton = document.getElementById('testConnection');
+        const alertBox = document.querySelector('.test-connection-alert');
+        
+        testButton.addEventListener('click', () => {
+            const url = document.getElementById('jira_url').value;
+            const username = document.getElementById('username').value;
+            const token = document.getElementById('api_token').value;
+            
+            if (!url || !username || !token) {
+                alertBox.textContent = 'Please fill in all required fields';
+                alertBox.className = 'alert alert-warning test-connection-alert';
+                alertBox.style.display = 'block';
+                return;
+            }
+            
+            testButton.disabled = true;
+            testButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Testing...';
+            alertBox.style.display = 'none';
+            
+            fetch('/api/test_jira', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: url,
+                    username: username,
+                    token: token
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alertBox.textContent = data.message;
+                    alertBox.className = 'alert alert-success test-connection-alert';
+                } else {
+                    alertBox.textContent = data.message;
+                    alertBox.className = 'alert alert-danger test-connection-alert';
+                }
+                alertBox.style.display = 'block';
+            })
+            .catch(error => {
+                alertBox.textContent = 'An error occurred while testing the connection: ' + error.message;
+                alertBox.className = 'alert alert-danger test-connection-alert';
+                alertBox.style.display = 'block';
+            })
+            .finally(() => {
+                testButton.disabled = false;
+                testButton.innerHTML = '<i class="fas fa-plug me-1"></i> Test Connection';
+            });
+        });
+    });
+</script>
+{% endblock %}
