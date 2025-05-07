@@ -88,11 +88,12 @@ def main():
     # Print startup message
     logger.info("=" * 60)
     logger.info("Starting InsightForge Web Interface (Simplified Version)")
-    logger.info(f"URL: http://{args.host}:{args.port}")
+    logger.info(f"URL: http://localhost:{args.port}")
+    logger.info(f"Also accessible via http://127.0.0.1:{args.port}")
     logger.info("=" * 60)
     
-    # Run the app
-    app.run(host=args.host, port=args.port, debug=args.debug)
+    # Run the app - using 0.0.0.0 to allow connections from all interfaces
+    app.run(host="0.0.0.0", port=args.port, debug=args.debug)
 
 if __name__ == "__main__":
     main()
